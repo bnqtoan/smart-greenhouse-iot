@@ -30,7 +30,7 @@ APP_PORT    = 5000
 # ---------------- shared state ----------------
 state = {
     "temp": 0.0, "hum": 0.0, "light": 0,
-    "led": 0, "vent": 0, "mode": "auto",
+    "led": 0, "vent": 0, "fire": 0, "mode": "auto",
     "source": "disconnected",  # "live" | "disconnected"
     "updated": None,
 }
@@ -116,6 +116,7 @@ def serial_loop():
                     "light": int(d.get("light", 0)),
                     "led": int(d.get("led", 0)),
                     "vent": int(d.get("vent", 0)),
+                    "fire": int(d.get("fire", 0)),
                     "mode": d.get("mode", "auto"),
                 }
                 update_state(clean, "live")
@@ -132,6 +133,35 @@ def serial_loop():
                 state["source"] = "disconnected"
                 state["updated"] = datetime.now().isoformat(timespec="seconds")
         time.sleep(3)  # then retry real serial
+
+# ---------------- 4-digit 7-seg (Pi GPIO via 74HC595) ----------------
+def sevenseg_loop():
+    """Push current temp (or 'FirE' on alarm) to the Pi-driven 4-digit display.
+    Runs the multiplex render in its own thread; updates the value 5x/sec."""
+    try:
+        from sevenseg import SevenSeg, format_temp
+    except Exception as e:
+        print(f"[7seg] module unavailable ({e})")
+        return
+    disp = SevenSeg()
+    if not disp.ok:
+        return
+    threading.Thread(target=disp.run, daemon=True).start()  # multiplex driver
+    blink = False
+    while True:
+        with state_lock:
+            fire = state.get("fire", 0)
+            temp = state.get("temp", 0)
+            connected = state.get("source") == "live"
+        if not connected:
+            disp.set_value("----", -1)
+        elif fire:
+            blink = not blink
+            disp.set_value("FirE" if blink else "    ", -1)  # blink for alarm
+        else:
+            text, dp = format_temp(temp)
+            disp.set_value(text, dp)
+        time.sleep(0.2)
 
 # ---------------- Flask ----------------
 app = Flask(__name__)
@@ -173,10 +203,12 @@ def api_control():
     if action == "set_threshold":
         if "temp" in d:  queue_cmd(f"TH_TEMP:{float(d['temp'])}")
         if "light" in d: queue_cmd(f"TH_LIGHT:{int(d['light'])}")
+        if "fire" in d:  queue_cmd(f"TH_FIRE:{float(d['fire'])}")
         return jsonify({"ok": True})
     return jsonify({"ok": False, "error": "unknown action"}), 400
 
 if __name__ == "__main__":
     init_db()
     threading.Thread(target=serial_loop, daemon=True).start()
+    threading.Thread(target=sevenseg_loop, daemon=True).start()  # Pi-driven 4-digit
     app.run(host="0.0.0.0", port=APP_PORT, debug=False, use_reloader=False)

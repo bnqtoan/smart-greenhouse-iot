@@ -34,6 +34,16 @@
     padding:7px 13px;border-radius:999px;border:1px solid var(--stroke);background:var(--card);backdrop-filter:blur(8px)}
   .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
   .dot.sim{background:var(--amber);box-shadow:0 0 10px var(--amber)}
+  .dot.fire{background:var(--red);box-shadow:0 0 10px var(--red)}
+
+  /* fire alarm banner */
+  .fire-banner{display:none;margin-bottom:16px;padding:16px 20px;border-radius:14px;
+    text-align:center;font-weight:800;font-size:17px;color:#fff;
+    background:linear-gradient(135deg,#dc2626,#991b1b);border:1px solid #f87171;
+    box-shadow:0 0 30px #dc262688;animation:firepulse 1s ease-in-out infinite}
+  .fire-banner.on{display:block}
+  @keyframes firepulse{0%,100%{box-shadow:0 0 18px #dc262666}50%{box-shadow:0 0 42px #ef4444cc}}
+  body.firealert{background:radial-gradient(900px 500px at 50% -10%,#7f1d1d55,transparent),linear-gradient(160deg,var(--bg),var(--bg2))}
 
   .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}
   @media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
@@ -91,6 +101,11 @@
     </div>
     <div class="pill"><span id="srcDot" class="dot"></span><span id="srcTxt">Connecting…</span><span id="upd" style="color:var(--muted);font-weight:500"></span></div>
   </header>
+
+  <!-- FIRE / OVERHEAT alarm banner (hidden unless fire) -->
+  <div id="fireBanner" class="fire-banner">
+    🔥 CẢNH BÁO CHÁY / QUÁ NHIỆT — Buzzer kêu, cửa thông gió tự mở! 🔥
+  </div>
 
   <!-- metric cards -->
   <div class="grid">
@@ -207,6 +222,11 @@ async function poll(){
     setBar("#bHum",   s.hum);
     setBar("#bLight", (s.light/1023)*100);
     $("#actuStatus").textContent = `Đèn: ${s.led?"BẬT":"TẮT"} · Cửa: ${s.vent?"MỞ":"ĐÓNG"}`;
+
+    // FIRE / overheat alarm
+    const fire = !!s.fire;
+    $("#fireBanner").classList.toggle("on", fire);
+    document.body.classList.toggle("firealert", fire);
 
     // source pill
     const live = s.source==="live";
