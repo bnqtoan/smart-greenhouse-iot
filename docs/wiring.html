@@ -153,7 +153,7 @@ const DATA = {
   servo:{name:"Servo SG90 (tuỳ chọn)", wires:[["#ef4444","Đỏ → 5V"],["#f97316","Cam → D9 (PWM)"],["#0f172a","Nâu → GND"]], note:"Nếu giật/reset Arduino: cấp nguồn riêng cho servo, hoặc bỏ #define USE_SERVO."},
   lcd:  {name:"LCD1602 I2C (tuỳ chọn)", wires:[["#ef4444","VCC → 5V"],["#0f172a","GND → GND"],["#a78bfa","SDA → A4"],["#a78bfa","SCL → A5"]], note:"Màn trắng không chữ → vặn contrast / đổi địa chỉ 0x27→0x3F / bỏ #define USE_LCD."},
   buzzer:{name:"Buzzer báo cháy (Layer 3)", wires:[["#eab308","+ → D8"],["#0f172a","− → GND"]], note:"Active buzzer. Code tự kêu khi temp ≥ 50°C (báo cháy/quá nhiệt) + mở cửa thông gió. Test: hơ bật lửa gần DHT22."},
-  seg:  {name:"LED 4-digit (trên Raspberry Pi)", wires:[["#eab308","DS → GPIO17"],["#eab308","STCP → GPIO27"],["#eab308","SHCP → GPIO22"],["#ef4444","VCC → 3.3V"],["#0f172a","GND → GND"]], note:"⚠️ Lắp trên breadboard riêng nối THẲNG vào Raspberry Pi (không qua Arduino). 74HC595 cấp 3.3V — không hạ áp. Pi tự đẩy nhiệt độ ra LED; cháy thì nhấp nháy 'FirE'. Đây là điểm rubric cột Pi mức 9–10."}
+  seg:  {name:"LED 4-digit (trên Raspberry Pi)", wires:[["#eab308","DS → GPIO24"],["#eab308","RCLK → GPIO23"],["#eab308","SRCLK → GPIO18"],["#ef4444","VCC → 3.3V"],["#0f172a","GND → GND"]], note:"⚠️ Lắp trên breadboard riêng nối THẲNG vào Raspberry Pi (không qua Arduino). 74HC595 cấp 3.3V — không hạ áp. Pi tự đẩy nhiệt độ ra LED; cháy thì nhấp nháy 'FirE'. Đây là điểm rubric cột Pi mức 9–10."}
 };
 const svg = document.getElementById('svg');
 const detail = document.getElementById('detail');

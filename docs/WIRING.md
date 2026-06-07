@@ -43,13 +43,16 @@ Dùng 74HC595 + 4-digit 7-seg trên breadboard riêng, cấp **3.3V từ Pi** (k
 
 | 74HC595 | Pi (BCM) | Ghi chú |
 |---|---|---|
-| DS (14) | GPIO17 | data |
-| STCP (12) | GPIO27 | latch |
-| SHCP (11) | GPIO22 | clock |
+| DS (14) | GPIO24 | data (SDI) |
+| STCP (12) | GPIO23 | latch (RCLK) |
+| SHCP (11) | GPIO18 | clock (SRCLK) |
 | VCC (16), MR (10) | 3.3V | |
 | GND (8), OE (13) | GND | OE→GND để bật output |
 | Q0..Q7 | a,b,c,d,e,f,g,dp | qua trở 220–330Ω |
-| 4 chân digit chung | GPIO23,24,25,12 | LOW = bật digit |
+| 4 chân digit chung | GPIO10, GPIO22, GPIO27, GPIO17 | digit 0→3 (HIGH = bật digit) |
+
+> Theo đúng sơ đồ **SunFounder Raphael-kit "1.1.5 4-Digit 7-Segment"**. LED loại
+> **common-anode** (mã đoạn đảo). Code `sevenseg.py` đã set sẵn đúng các chân này.
 
 Pi tự đẩy nhiệt độ ra LED 4 digit (hiện `27.5`); khi cháy nhấp nháy `FirE`.
 → Đúng yêu cầu rubric cột **Raspberry Pi mức 9–10 ("LED 4 digit")**: chính Pi điều khiển hiển thị.

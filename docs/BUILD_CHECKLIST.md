@@ -17,7 +17,7 @@
 | Servo SG90 | **D9** | 🟡 Layer 2 |
 | LCD1602 I2C (0x27) | **A4=SDA, A5=SCL** | 🟡 Layer 2 |
 | Buzzer (còi báo cháy) | **D8** (trên Arduino) | 🔴 Layer 3 |
-| 4-digit 7-seg + 74HC595 | **trên RASPBERRY PI** GPIO BCM 17/27/22 (3.3V) | 🔴 Layer 3 |
+| 4-digit 7-seg + 74HC595 | **trên RASPBERRY PI** — DS→GPIO24, RCLK→GPIO23, SRCLK→GPIO18 (3.3V) | 🔴 Layer 3 |
 | Nguồn | 5V / GND | — |
 | Arduino → Pi | **CÁP USB** (/dev/ttyACM0) | — |
 
@@ -86,9 +86,10 @@
 > ⚠️ Phần này lắp trên **breadboard riêng nối thẳng vào GPIO của Raspberry Pi** (không qua Arduino).
 > Cấp nguồn 74HC595 bằng **3.3V của Pi** — KHÔNG cần hạ áp.
 - [ ] 74HC595: VCC(16)→3.3V, GND(8)→GND, MR(10)→3.3V, OE(13)→GND.
-- [ ] DS(14)→**GPIO17**, STCP(12)→**GPIO27**, SHCP(11)→**GPIO22** (đánh số BCM).
+- [ ] DS(14)→**GPIO24**, STCP/RCLK(12)→**GPIO23**, SHCP/SRCLK(11)→**GPIO18** (số BCM).
 - [ ] Q0..Q7 → 8 thanh LED (a..g, dp) qua trở 220–330Ω.
-- [ ] 4 chân chung của 4 digit → **GPIO23, 24, 25, 12**.
+- [ ] 4 chân chung của 4 digit → **GPIO10, GPIO22, GPIO27, GPIO17** (digit 0→3).
+- [ ] Theo sơ đồ **SunFounder 1.1.5 4-Digit** (LED common-anode). Code đã set đúng chân.
 - [ ] Trên Pi: `pip3 install RPi.GPIO` rồi chạy lại `app.py`.
 - [ ] PASS: LED 4 digit hiện nhiệt độ (vd `27.5`); khi cháy → nhấp nháy **"FirE"**.
 - [ ] ⚠️ Nếu không có RPi.GPIO / chưa lắp → app vẫn chạy bình thường, chỉ là không có LED.

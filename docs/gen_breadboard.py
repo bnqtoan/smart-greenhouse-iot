@@ -275,7 +275,7 @@ add(f'<rect x="{PDX}" y="{PDY}" width="240" height="60" rx="8" fill="#111827" st
 for i in range(4):
     add(f'<rect x="{PDX+18+i*54}" y="{PDY+12}" width="36" height="36" rx="3" fill="#7f1d1d"/>')
     add(f'<text x="{PDX+36+i*54}" y="{PDY+38}" text-anchor="middle" font-size="22" font-weight="800" fill="#fca5a5">{["2","7","5","C"][i]}</text>')
-add(f'<text x="{PDX+120}" y="{PDY+78}" text-anchor="middle" font-size="12" font-weight="800" fill="#9a3412">LED 4-digit → nối thẳng RASPBERRY PI (74HC595, GPIO 3.3V)</text>')
+add(f'<text x="{PDX+120}" y="{PDY+78}" text-anchor="middle" font-size="12" font-weight="800" fill="#9a3412">LED 4-digit → RASPBERRY PI (74HC595: DS24/RCLK23/SRCLK18, 3.3V)</text>')
 
 # =========================================================
 #  USB-to-Pi callout
