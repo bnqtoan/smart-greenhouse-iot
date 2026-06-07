@@ -11,6 +11,9 @@ def b64(p):
 dash_auto = b64(SHOTS / "dashboard-bluetooth-auto.jpg")
 dash_manual = b64(SHOTS / "dashboard-bluetooth-manual.jpg")
 wiring = b64(SHOTS / "wiring-diagram.png")
+lcd_fire = b64(SHOTS / "lcd-fire-alarm.jpg")
+lcd_normal = b64(SHOTS / "lcd-normal.jpg")
+telegram = b64(SHOTS / "telegram-alerts.jpg")
 cover_art = b64(pathlib.Path(__file__).parent / "cover-art.png")
 
 TEAM = [
@@ -122,7 +125,6 @@ slide(f"""
     <div class="tagline">Nhà kính tự động: <b>giám sát – bảo vệ – cảnh báo từ xa</b></div>
     <div class="course">IAD591 · Internet of Things · Đồ án cuối kỳ</div>
     <ul class="team">{team_rows}</ul>
-    <div class="repo">github.com/bnqtoan/smart-greenhouse-iot</div>
   </div>
 """, "cover-slide")
 
@@ -175,6 +177,7 @@ slide(f"""
         <tr><td>LCD1602 I2C</td><td>A4 / A5</td></tr>
         <tr><td>HC-05 Bluetooth</td><td>D10/D11</td></tr>
       </table>
+      <figure class="lcd-thumb"><img class="shot" src="data:image/jpeg;base64,{lcd_normal}"/><figcaption>Mạch thật: LCD hiển thị T/H, chế độ MANUAL</figcaption></figure>
     </div>
   </div>
 """)
@@ -200,9 +203,9 @@ slide("""
 """)
 
 # 6 — Automation + protection
-slide("""
+slide(f"""
   <h2>Logic tự động + BẢO VỆ</h2>
-  <div class="two">
+  <div class="three">
     <div>
       <h3>Tự động hoá</h3>
       <ul>
@@ -213,36 +216,37 @@ slide("""
       </ul>
     </div>
     <div class="fire-card">
-      <div class="fhead">🔥 FIRE / OVERHEAT PROTECTION</div>
+      <div class="fhead">🔥 FIRE / OVERHEAT</div>
       <div class="fsub">killer feature</div>
-      <p>Khi <b>temp ≥ ngưỡng cháy</b>, hệ thống tự động:</p>
+      <p>Khi <b>temp ≥ ngưỡng</b>, tự động:</p>
       <ul>
-        <li>🔊 Buzzer hú liên tục</li>
-        <li>🚪 Servo tự mở cửa thoát nhiệt</li>
-        <li>🟥 Banner đỏ trên dashboard</li>
-        <li>📲 Gửi alert Telegram</li>
+        <li>🔊 Buzzer hú</li>
+        <li>🚪 Servo mở cửa thoát nhiệt</li>
+        <li>🟥 Banner đỏ dashboard</li>
+        <li>📲 Alert Telegram</li>
       </ul>
     </div>
+    <figure><img class="shot" src="data:image/jpeg;base64,{lcd_fire}"/><figcaption>LCD báo cháy thật: "!! FIRE ALARM !" · VENT OP</figcaption></figure>
   </div>
 """)
 
 # 7 — Telegram remote alert
-slide("""
+slide(f"""
   <h2>Cảnh báo từ xa — Telegram (Layer 4)</h2>
-  <div class="two">
+  <div class="tg-layout">
     <div>
       <p>Khi xảy ra <b>cháy / quá nhiệt</b>, Pi gửi cảnh báo lên kênh Telegram
       <b>"TheHouse"</b> với giá trị IoT thật.</p>
       <ul>
         <li>Người dùng nhận thông báo <b>ngay trên điện thoại</b></li>
         <li>Không cần mở dashboard vẫn biết sự cố</li>
+        <li>Tự gửi <b>"✅ Đã an toàn"</b> khi nhiệt độ về bình thường</li>
         <li>Đóng vòng lặp: <b>giám sát → bảo vệ → báo người</b></li>
       </ul>
+      <p class="proof">📲 Ảnh thật từ kênh <b>TheHouse</b>: nhiều lần cháy được phát hiện,
+      còi kêu + cửa tự mở, kèm thông báo "đã an toàn".</p>
     </div>
-    <div class="tg-card">
-      <div class="tg-head">📲 TheHouse</div>
-      <div class="tg-msg">🔥 <b>CẢNH BÁO CHÁY</b><br>Nhiệt độ: <b>52.3°C</b> ≥ ngưỡng<br>Cửa thông gió: đã MỞ<br>⏱ 14:02:33</div>
-    </div>
+    <figure class="phone"><img class="shot" src="data:image/jpeg;base64,{telegram}"/></figure>
   </div>
 """)
 
@@ -270,7 +274,7 @@ slide(f"""
       <ul>
         <li>Chạy thật trên <b>Raspberry Pi</b></li>
         <li><b>systemd service</b> tự khởi động khi boot</li>
-        <li>Repo public + GitHub Pages hub site</li>
+        <li>Mã nguồn quản lý bằng Git, có trang hướng dẫn web</li>
       </ul>
     </div>
   </div>
@@ -324,6 +328,16 @@ code {{ font-family: "JetBrains Mono", monospace; background:#16203a; padding:2p
 .two.wide-left {{ grid-template-columns: 1.45fr 1fr; }}
 .two.wide-right {{ grid-template-columns: 1fr 1.2fr; align-items:center; }}
 .two.even {{ grid-template-columns:1fr 1fr; gap:26px; }}
+.three {{ display:grid; grid-template-columns:1fr 1fr 0.85fr; gap:24px; align-items:start; }}
+.three h3 {{ margin-top:0; }}
+.three li {{ font-size:17px; line-height:1.55; }}
+.lcd-thumb {{ margin-top:16px; }}
+.lcd-thumb img {{ border-radius:10px; }}
+.lcd-thumb figcaption {{ font-size:13px; margin-top:7px; }}
+.three figcaption {{ font-size:14px; }}
+.tg-layout {{ display:grid; grid-template-columns:1.45fr 0.55fr; gap:40px; align-items:start; }}
+.phone img {{ width:100%; border-radius:14px; max-height:540px; object-fit:contain; }}
+.proof {{ margin-top:18px; font-size:16px; color:#9fe7c8; border-left:3px solid #6ee7b7; padding-left:14px; }}
 .shot {{ width:100%; border-radius:12px; border:1px solid #25364f; box-shadow:0 14px 40px rgba(0,0,0,.5); }}
 figure {{ margin:0; }} figcaption {{ text-align:center; margin-top:10px; font-size:16px; color:#9fb3d0; }}
 
@@ -373,8 +387,10 @@ table.rubric th {{ background:#7c3aed; color:#fff; }}
 table.rubric tr:nth-child(even) td {{ background:#101a30; }}
 
 /* fire card */
-.fire-card {{ background:linear-gradient(160deg,#2a1410,#1a0d0a); border:1px solid #f0883e; border-radius:18px; padding:26px; }}
-.fire-card .fhead {{ font-size:22px; font-weight:800; color:#f0883e; }}
+.fire-card {{ background:linear-gradient(160deg,#2a1410,#1a0d0a); border:1px solid #f0883e; border-radius:18px; padding:22px; }}
+.fire-card p {{ font-size:16px; }}
+.three .fire-card li {{ color:#f3d9c9; }}
+.fire-card .fhead {{ font-size:20px; font-weight:800; color:#f0883e; }}
 .fire-card .fsub {{ font-size:14px; color:#c98a6a; margin-bottom:10px; letter-spacing:1px; }}
 .fire-card ul li {{ color:#f3d9c9; }}
 
