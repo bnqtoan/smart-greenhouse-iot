@@ -19,9 +19,13 @@ final/
 │   └── greenhouse.db                   # SQLite tự tạo
 └── docs/
     ├── WIRING.md                       # sơ đồ đấu nối + bảng pin
-    ├── BUILD_CHECKLIST.md              # thứ tự lắp & test (2 lớp) ⬅ ĐỌC TRƯỚC
+    ├── BUILD_CHECKLIST.md              # thứ tự lắp & test ⬅ ĐỌC TRƯỚC
+    ├── BLUETOOTH_PLAYBOOK.md           # 📶 kết nối Bluetooth Arduino↔Pi (HC-05)
     └── SLIDES_OUTLINE.md               # dàn ý slide + đối chiếu rubric
 ```
+
+## 📶 Kết nối Bluetooth (HC-05)
+Hướng dẫn đầy đủ + code: [`docs/BLUETOOTH_PLAYBOOK.md`](docs/BLUETOOTH_PLAYBOOK.md)
 
 ## 📺 Xem cách đấu nối (visual)
 - **Sơ đồ breadboard chính xác** (đấu theo hình này): `docs/wiring-breadboard.svg`
