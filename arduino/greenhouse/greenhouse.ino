@@ -24,11 +24,18 @@
  */
 
 #include <DHT.h>
+#include <SoftwareSerial.h>
 
 // ---- LAYER 2 toggles: comment a line out to disable that hardware ----
 #define USE_SERVO
 #define USE_LCD
+#define USE_BLUETOOTH        // HC-05 on D10(RX)/D11(TX). Comment out to disable.
 // ----------------------------------------------------------------------
+
+#ifdef USE_BLUETOOTH
+  // SoftwareSerial(RX, TX): D10 receives from HC-05 TXD, D11 sends to HC-05 RXD
+  SoftwareSerial bt(10, 11);
+#endif
 
 #ifdef USE_SERVO
   #include <Servo.h>
@@ -81,6 +88,9 @@ void setLed(bool on) {
 
 void setup() {
   Serial.begin(9600);
+#ifdef USE_BLUETOOTH
+  bt.begin(9600);            // HC-05 default baud is 9600
+#endif
   pinMode(LED_PIN, OUTPUT);
   pinMode(BUZZ_PIN, OUTPUT);
   digitalWrite(BUZZ_PIN, LOW);
@@ -169,15 +179,18 @@ void updateLcd() {
 }
 
 void report() {
-  // JSON one-liner -> Pi
-  Serial.print("{\"temp\":");  Serial.print(temp, 1);
-  Serial.print(",\"hum\":");   Serial.print(hum, 1);
-  Serial.print(",\"light\":"); Serial.print(light);
-  Serial.print(",\"led\":");   Serial.print(ledOn ? 1 : 0);
-  Serial.print(",\"vent\":");  Serial.print(ventOpen ? 1 : 0);
-  Serial.print(",\"fire\":");  Serial.print(fire ? 1 : 0);
-  Serial.print(",\"mode\":\"");Serial.print(autoMode ? "auto" : "manual");
-  Serial.println("\"}");
+  // Build one JSON line, send to BOTH USB and Bluetooth (USB = backup).
+  String j = "{\"temp\":" + String(temp, 1)
+           + ",\"hum\":"   + String(hum, 1)
+           + ",\"light\":" + String(light)
+           + ",\"led\":"   + String(ledOn ? 1 : 0)
+           + ",\"vent\":"  + String(ventOpen ? 1 : 0)
+           + ",\"fire\":"  + String(fire ? 1 : 0)
+           + ",\"mode\":\"" + String(autoMode ? "auto" : "manual") + "\"}";
+  Serial.println(j);
+#ifdef USE_BLUETOOTH
+  bt.println(j);
+#endif
 }
 
 void handleCommand(String c) {
@@ -196,11 +209,18 @@ void handleCommand(String c) {
 }
 
 void loop() {
-  // read incoming command lines without blocking
+  // read incoming command lines from USB without blocking
   while (Serial.available()) {
     String c = Serial.readStringUntil('\n');
     handleCommand(c);
   }
+#ifdef USE_BLUETOOTH
+  // ...and from Bluetooth (HC-05)
+  while (bt.available()) {
+    String c = bt.readStringUntil('\n');
+    handleCommand(c);
+  }
+#endif
 
   // buzzer must update every loop (not just once per second) for a crisp beep
   updateBuzzer();
