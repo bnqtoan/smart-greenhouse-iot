@@ -94,13 +94,9 @@ void setup() {
 #ifdef USE_LCD
   Wire.begin();
   lcd.init();
-  lcd.begin(16, 2);        // some libs need begin() too; harmless if redundant
   lcd.backlight();
-  lcd.clear();             // wipe any power-on garbage cells
   lcd.setCursor(0, 0);
   lcd.print("Smart Greenhouse");
-  delay(500);
-  lcd.clear();
   lcdOk = true;
 #endif
 
@@ -144,37 +140,31 @@ void updateBuzzer() {
   digitalWrite(BUZZ_PIN, (millis() / 150) % 2 ? HIGH : LOW);
 }
 
-// Print a string padded/truncated to exactly 16 chars on the given row.
-// Guarantees no leftover characters from a previous (longer) value.
-void lcdLine(uint8_t row, const char *s) {
-#ifdef USE_LCD
-  char buf[17];
-  uint8_t i = 0;
-  for (; i < 16 && s[i]; i++) buf[i] = s[i];
-  for (; i < 16; i++) buf[i] = ' ';   // pad with spaces
-  buf[16] = '\0';
-  lcd.setCursor(0, row);
-  lcd.print(buf);
-#endif
-}
-
 void updateLcd() {
 #ifdef USE_LCD
   if (!lcdOk) return;
-  char l0[24], l1[24];
-  int t10 = (int)(temp * 10);        // avoid %f (AVR printf has no float by default)
-  if (fire) {
-    snprintf(l0, sizeof(l0), "** FIRE ALARM **");
-    snprintf(l1, sizeof(l1), "T:%d.%dC VENT OPEN", t10/10, abs(t10%10));
-  } else {
-    snprintf(l0, sizeof(l0), "T:%d.%dC H:%d%%", t10/10, abs(t10%10), (int)hum);
-    snprintf(l1, sizeof(l1), "%s L:%s%s",
-             autoMode ? "AUTO" : "MAN ",
-             ledOn ? "ON" : "OFF",
-             ventOpen ? " V:O" : " V:C");
+  if (fire) {                         // fire takes over the whole screen
+    lcd.setCursor(0, 0);
+    lcd.print("!! FIRE  ALARM !!");
+    lcd.setCursor(0, 1);
+    lcd.print("T:");
+    lcd.print(temp, 1);
+    lcd.print((char)223);
+    lcd.print("C VENT OPEN ");
+    return;
   }
-  lcdLine(0, l0);
-  lcdLine(1, l1);
+  lcd.setCursor(0, 0);
+  lcd.print("T:");
+  lcd.print(temp, 1);
+  lcd.print((char)223);            // degree symbol
+  lcd.print("C H:");
+  lcd.print((int)hum);
+  lcd.print("% ");
+  lcd.setCursor(0, 1);
+  lcd.print(autoMode ? "AUTO " : "MAN  ");
+  lcd.print("L:");
+  lcd.print(ledOn ? "ON " : "OFF");
+  lcd.print(ventOpen ? " V:O" : " V:C");
 #endif
 }
 
