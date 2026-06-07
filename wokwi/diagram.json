@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "author": "Smart Greenhouse Team",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "wokwi-arduino-uno", "id": "uno", "top": 0, "left": 0, "attrs": {} },
+    { "type": "wokwi-breadboard", "id": "bb1", "top": -130, "left": 200, "attrs": {} },
+    { "type": "wokwi-dht22", "id": "dht1", "top": -180, "left": 230, "attrs": {} },
+    { "type": "wokwi-photoresistor-sensor", "id": "ldr1", "top": -180, "left": 330, "attrs": {} },
+    { "type": "wokwi-led", "id": "led1", "top": -100, "left": 430, "attrs": { "color": "green" } },
+    { "type": "wokwi-resistor", "id": "r1", "top": -60, "left": 420, "attrs": { "value": "220" } },
+    { "type": "wokwi-servo", "id": "servo1", "top": 100, "left": 350, "attrs": {} },
+    { "type": "wokwi-lcd1602", "id": "lcd1", "top": 250, "left": 100, "attrs": { "pins": "i2c" } }
+  ],
+  "connections": [
+    [ "uno:5V", "bb1:1t.1", "red", [ "v0" ] ],
+    [ "uno:GND.1", "bb1:1b.1", "black", [ "v0" ] ],
+
+    [ "dht1:VCC", "bb1:1t.5", "red", [ "v0" ] ],
+    [ "dht1:GND", "bb1:1b.5", "black", [ "v0" ] ],
+    [ "dht1:SDA", "uno:2", "green", [ "v0" ] ],
+
+    [ "ldr1:VCC", "bb1:1t.15", "red", [ "v0" ] ],
+    [ "ldr1:GND", "bb1:1b.15", "black", [ "v0" ] ],
+    [ "ldr1:AO", "uno:A0", "yellow", [ "v0" ] ],
+
+    [ "led1:A", "r1:1", "green", [ "v0" ] ],
+    [ "r1:2", "uno:7", "green", [ "v0" ] ],
+    [ "led1:C", "bb1:1b.25", "black", [ "v0" ] ],
+
+    [ "servo1:V+", "bb1:1t.30", "red", [ "v0" ] ],
+    [ "servo1:GND", "bb1:1b.30", "black", [ "v0" ] ],
+    [ "servo1:PWM", "uno:9", "orange", [ "v0" ] ],
+
+    [ "lcd1:VCC", "uno:5V", "red", [ "v0" ] ],
+    [ "lcd1:GND", "uno:GND.2", "black", [ "v0" ] ],
+    [ "lcd1:SDA", "uno:A4", "blue", [ "v0" ] ],
+    [ "lcd1:SCL", "uno:A5", "purple", [ "v0" ] ]
+  ]
+}

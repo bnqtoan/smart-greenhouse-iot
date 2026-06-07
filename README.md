@@ -1,5 +1,11 @@
 # Smart Greenhouse — IoT Final (IAD591)
 
+## 👉 TRANG HƯỚNG DẪN CHO NHÓM (xem cái này trước)
+### https://bnqtoan.github.io/smart-greenhouse-iot/
+Trang tổng hợp tất cả: tổng quan, kiến trúc, sơ đồ đấu nối tương tác, các bước lắp ráp, cách chạy, link mọi tài liệu. Mở trên điện thoại/laptop đều được.
+
+---
+
 Hệ thống nhà kính thông minh 3 tầng: **Arduino (cảm biến/điều khiển) → cáp USB → Raspberry Pi (Flask + SQLite) → Dashboard**.
 
 ## Cấu trúc
@@ -18,11 +24,10 @@ final/
 ```
 
 ## 📺 Xem cách đấu nối (visual)
-- **Trang tương tác** (bấm linh kiện → highlight dây): mở `docs/index.html` trong trình duyệt
-  (hoặc qua GitHub Pages — xem link bên dưới).
-- **Sơ đồ schematic** (chính xác từng chân): `docs/wiring.svg`
-- **Ảnh breadboard minh hoạ** (hình dung tổng thể): `docs/wiring-render.png`
-  *(ảnh AI minh hoạ — chân chính xác theo `wiring.svg` / `docs/index.html`)*
+- **Sơ đồ breadboard chính xác** (đấu theo hình này): `docs/wiring-breadboard.svg`
+  *(tạo bằng code `docs/gen_breadboard.py` — chính xác từng chân, không phải ảnh AI)*
+- **Trang tương tác** (bấm linh kiện → highlight dây): `docs/wiring.html`
+- **Sơ đồ khối**: `docs/wiring.svg`
 
 ## Chạy nhanh
 1. Arduino IDE: cài *DHT sensor library*, *LiquidCrystal_I2C* → nạp `greenhouse.ino`.

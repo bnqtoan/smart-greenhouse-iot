@@ -163,11 +163,8 @@
 <section id="wiring"><div class="wrap">
   <h2>Đấu nối phần cứng</h2>
   <p class="lead">Tất cả cảm biến/actuator gắn trên Arduino. <a href="wiring.html" style="color:var(--green);font-weight:700">→ Mở sơ đồ tương tác</a> (bấm từng linh kiện để xem dây nối).</p>
-  <div class="grid2" style="margin-bottom:16px">
-    <div class="imgframe"><img src="wiring.svg" alt="Sơ đồ schematic"></div>
-    <div class="imgframe"><img src="wiring-render.png" alt="Ảnh breadboard minh hoạ"></div>
-  </div>
-  <p style="color:var(--muted);font-size:12.5px;margin-bottom:18px">Trái: sơ đồ chính xác từng chân · Phải: ảnh breadboard minh hoạ (chân theo sơ đồ trái).</p>
+  <div class="imgframe" style="margin-bottom:10px;background:#fbfcfe"><img src="wiring-breadboard.svg" alt="Sơ đồ breadboard chính xác từng chân"></div>
+  <p style="color:var(--muted);font-size:12.5px;margin-bottom:18px">Sơ đồ breadboard <b>chính xác từng chân</b> (tạo bằng code <code>gen_breadboard.py</code>) — đấu theo đúng hình này. Xem thêm sơ đồ khối: <a href="wiring.svg" style="color:var(--green)">wiring.svg</a>.</p>
   <div class="grid2">
     <div class="comp"><span class="em">🌡️</span><div><div class="t">DHT22 <span class="pin">→ D2</span></div><div class="d">Nhiệt độ + độ ẩm · VCC→5V, DATA→D2, GND→GND</div></div></div>
     <div class="comp"><span class="em">☀️</span><div><div class="t">LDR + R10kΩ <span class="pin">→ A0</span></div><div class="d">Cảm biến sáng · cầu chia áp 5V—LDR—A0—10k—GND</div></div></div>
