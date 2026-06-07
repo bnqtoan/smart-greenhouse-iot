@@ -17,7 +17,7 @@ Pin map (matches greenhouse.ino):
 Run:  python3 gen_breadboard.py  ->  writes wiring-breadboard.svg
 """
 
-W, H = 1180, 760
+W, H = 1180, 820
 parts = []
 def add(s): parts.append(s)
 
@@ -55,6 +55,30 @@ for col,lbl in [(RED,"5V"),(BLK,"GND"),(YEL,"tín hiệu"),(ORN,"PWM servo"),(BL
     add(f'<line x1="{lx}" y1="{ly}" x2="{lx+24}" y2="{ly}" stroke="{col}" stroke-width="4" stroke-linecap="round"/>')
     add(f'<text x="{lx+30}" y="{ly+4}" font-size="12" fill="#334155">{lbl}</text>')
     lx += 40 + len(lbl)*7 + 30
+
+# =========================================================
+#  LAYER ZONES (drawn first, behind everything)
+# =========================================================
+L1="#16a34a"; L2="#d97706"
+def zone(x,y,w,h,color,fill):
+    add(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="16" fill="{fill}" '
+        f'stroke="{color}" stroke-width="2.5" stroke-dasharray="10 6"/>')
+def tag(x,y,color,text):
+    w=len(text)*7+18
+    add(f'<rect x="{x}" y="{y}" width="{w}" height="22" rx="11" fill="{color}"/>')
+    add(f'<text x="{x+w/2}" y="{y+15}" text-anchor="middle" font-size="11" font-weight="800" fill="#fff">{text}</text>')
+
+# Layer 1 zone: wraps DHT22 + LDR breadboard + LED breadboard (top strip)
+zone(452, 78, 666, 152, L1, "#16a34a12")
+tag(452, 56, L1, "🟢 LAYER 1 — LÕI AN TOÀN (DHT22 + LDR + LED)")
+
+# Layer 2 zone A: Servo (right)
+zone(958, 332, 200, 120, L2, "#d9770612")
+tag(958, 310, L2, "🟡 LAYER 2 — TÙY CHỌN")
+
+# Layer 2 zone B: LCD (bottom)
+zone(452, 540, 330, 158, L2, "#d9770612")
+tag(452, 518, L2, "🟡 LAYER 2 — TÙY CHỌN")
 
 # =========================================================
 #  ARDUINO UNO  (left)
@@ -206,7 +230,6 @@ for py,lbl,col in [(sv_sig,"S",ORN),(sv_v,"+",RED),(sv_g,"−",BLK)]:
 wire(sv_sig[0], sv_sig[1], D9[0], D9[1], ORN, mid=(700, sv_sig[1]))
 wire(sv_v[0], sv_v[1], Pp(22)[0], Pp(22)[1], RED, mid=(SVX-40, 320))
 wire(sv_g[0], sv_g[1], Pg(22)[0], Pg(22)[1], BLK, mid=(SVX-60, 330))
-add(f'<text x="{SVX+60}" y="{SVY-30}" text-anchor="middle" font-size="10" font-weight="800" fill="#b45309">TUỲ CHỌN</text>')
 
 # =========================================================
 #  COMPONENT: LCD1602 + I2C  (bottom center)
@@ -221,7 +244,6 @@ for px,lbl in [(lcd_g,"G"),(lcd_v,"V"),(lcd_sda,"SDA"),(lcd_scl,"SCL")]:
     add(f'<rect x="{px[0]-2}" y="{LCY+52}" width="4" height="14" fill="#999"/>')
     add(f'<text x="{px[0]}" y="{LCY+80}" text-anchor="middle" font-size="8" fill="#cbd5e1">{lbl}</text>')
 add(f'<text x="{LCX+150}" y="{LCY+114}" text-anchor="middle" font-size="13" font-weight="800" fill="#d1fae5">LCD1602 + I2C  (0x27)</text>')
-add(f'<text x="{LCX+260}" y="{LCY-8}" text-anchor="middle" font-size="10" font-weight="800" fill="#b45309">TUỲ CHỌN</text>')
 # wires: V->rail+, G->rail-, SDA->A4, SCL->A5
 wire(lcd_v[0], lcd_v[1]+14, Pp(4)[0], Pp(4)[1], RED, mid=(lcd_v[0]-40, 420))
 wire(lcd_g[0], lcd_g[1]+14, Pg(4)[0], Pg(4)[1], BLK, mid=(lcd_g[0]-60, 420))
@@ -234,6 +256,16 @@ wire(lcd_scl[0], lcd_scl[1]+14, A5[0], A5[1], BLU, mid=(A5[0]+40, 560))
 add(f'<rect x="{AX-30}" y="{AY+AH+24}" width="380" height="44" rx="10" fill="#fff7ed" stroke="{ORN}" stroke-width="2"/>')
 add(f'<text x="{AX-14}" y="{AY+AH+50}" font-size="13" font-weight="800" fill="#9a3412">⎘ CÁP USB → Raspberry Pi (/dev/ttyACM0)</text>')
 add(f'<text x="{AX-14}" y="{AY+AH+64}" font-size="11" fill="#9a5a36">Cắm USB Arduino vào cổng USB của Pi. KHÔNG nối TX/RX.</text>')
+
+# ---------- two-layer strategy note ----------
+NY = 720
+add(f'<rect x="28" y="{NY}" width="1124" height="78" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>')
+add(f'<rect x="28" y="{NY}" width="10" height="78" rx="5" fill="{L1}"/>')
+add(f'<text x="52" y="{NY+24}" font-size="14" font-weight="800" fill="#166534">🟢 LAYER 1 — lắp &amp; test TRƯỚC (mục tiêu ~8 điểm):</text>')
+add(f'<text x="360" y="{NY+24}" font-size="13" fill="#334155">DHT22 (D2) + LDR (A0) + LED (D7) + cáp USB → Pi → Flask. Đủ rubric cơ bản, ít dây, khó hỏng.</text>')
+add(f'<text x="52" y="{NY+50}" font-size="14" font-weight="800" fill="#9a3412">🟡 LAYER 2 — thêm NẾU còn giờ (tăng điểm):</text>')
+add(f'<text x="360" y="{NY+50}" font-size="13" fill="#334155">Servo cửa thông gió (D9) + LCD1602 I2C (A4/A5). Mỗi phần độc lập — bỏ #define là tháo được, không ảnh hưởng Layer 1.</text>')
+add(f'<text x="52" y="{NY+70}" font-size="12" fill="#64748b">Quy tắc: lắp xong Layer 1, test PASS rồi mới đụng Layer 2. Linh kiện Layer 2 hỏng → demo vẫn chạy bình thường.</text>')
 
 add('</svg>')
 
