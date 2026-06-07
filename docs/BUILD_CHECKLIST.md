@@ -4,7 +4,6 @@
 > - Trang hướng dẫn đầy đủ: **https://bnqtoan.github.io/smart-greenhouse-iot/**
 > - Sơ đồ breadboard chính xác từng chân (có khoanh vùng Layer 1 / Layer 2): [`wiring-breadboard.svg`](./wiring-breadboard.svg)
 > - Sơ đồ tương tác (bấm linh kiện → highlight dây): [`wiring.html`](./wiring.html)
-> - Mô phỏng chạy thử online (Wokwi): xem [`../wokwi/README.md`](../wokwi/README.md)
 
 > Quy tắc vàng: **test từng phần ngay sau khi lắp**. Đừng lắp hết rồi mới bật.
 > Mỗi bước phải PASS mới qua bước sau. Layer 1 xong = đã chắc 8 điểm.
