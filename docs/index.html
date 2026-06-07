@@ -3,176 +3,264 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smart Greenhouse — Hướng dẫn đấu nối</title>
+<title>🌱 Smart Greenhouse — IoT Final Project (IAD591)</title>
 <style>
-  :root{--bg:#0f172a;--panel:#1e293b;--ink:#e2e8f0;--muted:#94a3b8;--line:#334155;
-    --red:#ef4444;--black:#0f172a;--yellow:#eab308;--orange:#f97316;--violet:#a78bfa;}
+  :root{
+    --bg:#0a0f1a;--bg2:#0e1626;--card:rgba(255,255,255,.05);--stroke:rgba(255,255,255,.12);
+    --txt:#e8eef7;--muted:#93a4bf;--green:#34d399;--blue:#60a5fa;--amber:#fbbf24;
+    --red:#f87171;--violet:#a78bfa;--orange:#fb923c;
+  }
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--ink);padding:20px}
-  .wrap{max-width:1100px;margin:0 auto}
-  h1{font-size:24px;margin-bottom:4px}
-  .sub{color:var(--muted);font-size:14px;margin-bottom:20px}
-  .layout{display:grid;grid-template-columns:1fr 360px;gap:20px}
-  @media(max-width:860px){.layout{grid-template-columns:1fr}}
-  .diagram{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px}
-  svg{width:100%;height:auto;display:block}
+  html{scroll-behavior:smooth}
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:var(--txt);line-height:1.6;
+    background:radial-gradient(900px 500px at 10% -10%,#16324f55,transparent),
+      radial-gradient(800px 500px at 110% 5%,#1f2a4a66,transparent),
+      linear-gradient(160deg,var(--bg),var(--bg2));min-height:100vh}
+  .wrap{max-width:980px;margin:0 auto;padding:0 20px}
 
-  .sidebar{display:flex;flex-direction:column;gap:10px}
-  .hint{color:var(--muted);font-size:13px;margin-bottom:4px}
-  .comp-btn{display:flex;align-items:center;gap:12px;text-align:left;width:100%;
-    background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;
-    color:var(--ink);cursor:pointer;transition:.15s;font-size:14px}
-  .comp-btn:hover{border-color:#64748b;transform:translateX(3px)}
-  .comp-btn.active{border-color:#38bdf8;box-shadow:0 0 0 2px #38bdf855;background:#0c4a6e33}
-  .comp-btn .em{font-size:22px}
-  .comp-btn .t{font-weight:700}
-  .comp-btn .d{font-size:12px;color:var(--muted)}
-  .opt-badge{margin-left:auto;font-size:10px;font-weight:700;color:#fbbf24;border:1px solid #fbbf2455;
-    border-radius:6px;padding:2px 6px}
+  /* nav */
+  nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);
+    background:rgba(10,15,26,.75);border-bottom:1px solid var(--stroke)}
+  nav .wrap{display:flex;align-items:center;gap:8px;height:56px;flex-wrap:wrap}
+  nav .brand{font-weight:800;margin-right:auto}
+  nav a{color:var(--muted);text-decoration:none;font-size:13.5px;font-weight:600;padding:6px 10px;border-radius:8px}
+  nav a:hover{color:#fff;background:var(--card)}
 
-  .detail{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;font-size:13px;min-height:90px}
-  .detail h3{font-size:15px;margin-bottom:8px}
-  .wire-row{display:flex;align-items:center;gap:8px;padding:4px 0}
-  .swatch{width:26px;height:6px;border-radius:6px;flex:none}
-  .legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;font-size:12px;color:var(--muted)}
-  .legend span{display:inline-flex;align-items:center;gap:6px}
-  .legend i{width:18px;height:5px;border-radius:5px;display:inline-block}
+  /* hero */
+  .hero{text-align:center;padding:60px 0 40px}
+  .hero .emoji{font-size:64px}
+  .hero h1{font-size:40px;font-weight:800;margin:10px 0 6px;letter-spacing:-.5px}
+  .hero p{color:var(--muted);font-size:17px;max-width:620px;margin:0 auto}
+  .badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+  .badge{font-size:12.5px;font-weight:700;padding:6px 13px;border-radius:999px;border:1px solid var(--stroke);background:var(--card)}
+  .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:26px}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:12px;text-decoration:none;
+    font-weight:700;font-size:15px;transition:.2s}
+  .btn.primary{background:linear-gradient(135deg,#10b981,#059669);color:#fff;box-shadow:0 8px 24px #10b98144}
+  .btn.primary:hover{transform:translateY(-2px)}
+  .btn.ghost{background:var(--card);border:1px solid var(--stroke);color:var(--txt)}
+  .btn.ghost:hover{border-color:#64748b}
 
-  /* dim non-active wires */
-  svg.focus .wire{opacity:.12}
-  svg.focus .wire.on{opacity:1;stroke-width:5}
-  svg.focus .node{opacity:.25}
-  svg.focus .node.on{opacity:1}
-  .wire{transition:opacity .2s}
+  section{padding:42px 0;border-top:1px solid rgba(255,255,255,.06)}
+  h2{font-size:26px;font-weight:800;margin-bottom:6px}
+  .lead{color:var(--muted);margin-bottom:22px;font-size:15px}
+
+  .card{background:var(--card);border:1px solid var(--stroke);border-radius:18px;padding:22px;backdrop-filter:blur(10px)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(max-width:760px){.grid2,.grid3{grid-template-columns:1fr}}
+
+  /* flow */
+  .flow{display:flex;align-items:stretch;gap:0;flex-wrap:wrap}
+  .flow .step{flex:1;min-width:150px;background:var(--card);border:1px solid var(--stroke);border-radius:16px;padding:18px;text-align:center;position:relative}
+  .flow .arrow{display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--muted);padding:0 6px}
+  @media(max-width:760px){.flow{flex-direction:column}.flow .arrow{transform:rotate(90deg);padding:6px 0}}
+  .flow .ic{font-size:32px}
+  .flow .lbl{font-weight:700;margin-top:6px}
+  .flow .tag{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+  .flow .desc{font-size:12.5px;color:var(--muted);margin-top:6px}
+
+  /* component cards */
+  .comp{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1px solid var(--stroke);border-radius:14px;padding:16px}
+  .comp .em{font-size:28px;flex:none}
+  .comp .t{font-weight:700}
+  .comp .pin{font-size:12px;color:var(--amber);font-weight:700}
+  .comp .d{font-size:12.5px;color:var(--muted)}
+  .opt{display:inline-block;font-size:10px;font-weight:800;color:var(--amber);border:1px solid #fbbf2455;border-radius:6px;padding:1px 6px;margin-left:6px}
+
+  /* steps */
+  ol.steps{counter-reset:s;list-style:none;display:flex;flex-direction:column;gap:12px}
+  ol.steps li{counter-increment:s;display:flex;gap:14px;background:var(--card);border:1px solid var(--stroke);border-radius:14px;padding:16px}
+  ol.steps li::before{content:counter(s);flex:none;width:34px;height:34px;border-radius:50%;
+    background:linear-gradient(135deg,#10b981,#059669);color:#fff;font-weight:800;display:grid;place-items:center}
+  ol.steps .t{font-weight:700}
+  ol.steps .pass{font-size:12.5px;color:var(--green);margin-top:2px}
+  .layerhead{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:14px;
+    padding:6px 14px;border-radius:999px;margin:18px 0 12px}
+  .l1{background:#10b98122;color:var(--green);border:1px solid #10b98144}
+  .l2{background:#fbbf2422;color:var(--amber);border:1px solid #fbbf2444}
+
+  /* run code */
+  pre{background:#060a12;border:1px solid var(--stroke);border-radius:12px;padding:16px;overflow-x:auto;
+    font-family:'SF Mono',Menlo,monospace;font-size:13px;color:#a7f3d0}
+  .imgframe{border:1px solid var(--stroke);border-radius:14px;overflow:hidden;background:#000}
+  .imgframe img{width:100%;display:block}
+
+  /* doc links */
+  .doclist{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:760px){.doclist{grid-template-columns:1fr}}
+  .doc{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--stroke);
+    border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--txt);transition:.15s}
+  .doc:hover{border-color:#64748b;transform:translateX(3px)}
+  .doc .em{font-size:24px}
+  .doc .t{font-weight:700}
+  .doc .d{font-size:12px;color:var(--muted)}
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--stroke)}
+  th{color:var(--muted);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+  td .ok{color:var(--green);font-weight:700}
+
+  .note{background:#fb923c1a;border:1px solid #fb923c44;border-radius:12px;padding:14px 16px;font-size:13.5px}
+  footer{text-align:center;color:var(--muted);font-size:13px;padding:36px 0}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>🌱 Smart Greenhouse — Hướng dẫn đấu nối</h1>
-  <p class="sub">Bấm vào từng linh kiện bên phải để xem dây nối tới chân nào trên Arduino. Nối Pi bằng <b>cáp USB</b> (không dùng TX/RX).</p>
 
-  <div class="layout">
-    <div class="diagram">
-      <svg id="svg" viewBox="0 0 640 460">
-        <!-- Arduino -->
-        <rect x="20" y="60" width="160" height="340" rx="12" fill="#0d7377" stroke="#0a5559"/>
-        <text x="100" y="84" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">ARDUINO UNO</text>
-        <rect x="6" y="100" width="16" height="26" rx="3" fill="#cbd5e1"/>
-        <text x="14" y="96" text-anchor="middle" fill="#94a3b8" font-size="9">USB</text>
+<nav><div class="wrap">
+  <span class="brand">🌱 Smart Greenhouse</span>
+  <a href="#what">Tổng quan</a>
+  <a href="#arch">Kiến trúc</a>
+  <a href="#wiring">Đấu nối</a>
+  <a href="#build">Lắp ráp</a>
+  <a href="#run">Chạy</a>
+  <a href="#docs">Tài liệu</a>
+  <a href="https://github.com/bnqtoan/smart-greenhouse-iot" target="_blank">GitHub ↗</a>
+</div></nav>
 
-        <!-- pins: id'd circles -->
-        <!-- D7 -->
-        <g class="node" data-pin="D7"><rect x="160" y="120" width="34" height="20" rx="4" fill="#1e293b"/><text x="177" y="134" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">D7</text></g>
-        <!-- D9 -->
-        <g class="node" data-pin="D9"><rect x="160" y="150" width="34" height="20" rx="4" fill="#1e293b"/><text x="177" y="164" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">D9</text></g>
-        <!-- D2 -->
-        <g class="node" data-pin="D2"><rect x="160" y="180" width="34" height="20" rx="4" fill="#1e293b"/><text x="177" y="194" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">D2</text></g>
-        <!-- 5V -->
-        <g class="node" data-pin="5V"><rect x="6" y="250" width="34" height="20" rx="4" fill="#b91c1c"/><text x="23" y="264" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">5V</text></g>
-        <!-- GND -->
-        <g class="node" data-pin="GND"><rect x="6" y="278" width="34" height="20" rx="4" fill="#111827"/><text x="23" y="292" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">GND</text></g>
-        <!-- A0 -->
-        <g class="node" data-pin="A0"><rect x="6" y="306" width="34" height="20" rx="4" fill="#1e293b"/><text x="23" y="320" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">A0</text></g>
-        <!-- A4 -->
-        <g class="node" data-pin="A4"><rect x="6" y="340" width="34" height="20" rx="4" fill="#7c3aed"/><text x="23" y="354" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">A4</text></g>
-        <!-- A5 -->
-        <g class="node" data-pin="A5"><rect x="6" y="368" width="34" height="20" rx="4" fill="#7c3aed"/><text x="23" y="382" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">A5</text></g>
+<header class="hero"><div class="wrap">
+  <div class="emoji">🌱</div>
+  <h1>Smart Greenhouse</h1>
+  <p>Hệ thống IoT nhà kính thông minh — đo nhiệt độ, độ ẩm, ánh sáng và tự động điều khiển đèn + cửa thông gió. Đồ án cuối kỳ <b>IAD591</b>.</p>
+  <div class="badges">
+    <span class="badge">Arduino Uno</span>
+    <span class="badge">Raspberry Pi</span>
+    <span class="badge">Flask + SQLite</span>
+    <span class="badge">Dashboard realtime</span>
+  </div>
+  <div class="cta">
+    <a class="btn primary" href="#build">🔧 Bắt đầu lắp ráp</a>
+    <a class="btn ghost" href="wiring.html">🔌 Sơ đồ đấu nối tương tác</a>
+  </div>
+</div></header>
 
-        <!-- component nodes (right) -->
-        <g class="node" data-comp="dht"><rect x="430" y="70" width="180" height="46" rx="8" fill="#1d4ed833" stroke="#3b82f6"/><text x="520" y="92" text-anchor="middle" fill="#dbeafe" font-size="12" font-weight="700">DHT22</text><text x="520" y="108" text-anchor="middle" fill="#93c5fd" font-size="10">nhiệt độ + độ ẩm</text></g>
-        <g class="node" data-comp="ldr"><rect x="430" y="128" width="180" height="46" rx="8" fill="#6d28d933" stroke="#a78bfa"/><text x="520" y="150" text-anchor="middle" fill="#ede9fe" font-size="12" font-weight="700">LDR + R10k</text><text x="520" y="166" text-anchor="middle" fill="#c4b5fd" font-size="10">cảm biến ánh sáng → A0</text></g>
-        <g class="node" data-comp="led"><rect x="430" y="186" width="180" height="46" rx="8" fill="#ca8a0433" stroke="#eab308"/><text x="520" y="208" text-anchor="middle" fill="#fef9c3" font-size="12" font-weight="700">LED + R220Ω</text><text x="520" y="224" text-anchor="middle" fill="#fde68a" font-size="10">đèn trồng cây → D7</text></g>
-        <g class="node" data-comp="servo"><rect x="430" y="244" width="180" height="46" rx="8" fill="#16a34a33" stroke="#22c55e"/><text x="520" y="266" text-anchor="middle" fill="#dcfce7" font-size="12" font-weight="700">Servo SG90 ⚙</text><text x="520" y="282" text-anchor="middle" fill="#86efac" font-size="10">cửa thông gió → D9</text></g>
-        <g class="node" data-comp="lcd"><rect x="430" y="302" width="180" height="46" rx="8" fill="#0284c733" stroke="#38bdf8"/><text x="520" y="324" text-anchor="middle" fill="#e0f2fe" font-size="12" font-weight="700">LCD1602 I2C ⚙</text><text x="520" y="340" text-anchor="middle" fill="#7dd3fc" font-size="10">SDA→A4, SCL→A5</text></g>
+<!-- WHAT -->
+<section id="what"><div class="wrap">
+  <h2>Hệ thống làm gì?</h2>
+  <p class="lead">Mô phỏng một nhà kính tự động: cảm biến đo môi trường → tự bật đèn khi tối, mở cửa khi nóng → hiển thị & điều khiển trên dashboard web.</p>
+  <div class="grid3">
+    <div class="card"><div style="font-size:30px">📡</div><h3 style="margin:8px 0 4px">Thu thập</h3><p style="color:var(--muted);font-size:14px">DHT22 đo nhiệt/ẩm, LDR đo ánh sáng — đọc liên tục mỗi giây.</p></div>
+    <div class="card"><div style="font-size:30px">🤖</div><h3 style="margin:8px 0 4px">Tự động</h3><p style="color:var(--muted);font-size:14px">Tối → bật đèn trồng cây. Nóng → mở cửa thông gió (servo). Có chế độ Auto/Manual.</p></div>
+    <div class="card"><div style="font-size:30px">📊</div><h3 style="margin:8px 0 4px">Giám sát</h3><p style="color:var(--muted);font-size:14px">Dashboard web: số liệu realtime, biểu đồ lịch sử, điều khiển từ xa, lưu SQLite.</p></div>
+  </div>
+</div></section>
 
-        <!-- WIRES (data-comp groups them) -->
-        <!-- DHT -->
-        <path class="wire dht" d="M430 84 C 300 84, 120 260, 40 260" stroke="#ef4444" fill="none" stroke-width="3"/>
-        <path class="wire dht" d="M430 92 C 320 110, 240 190, 194 190" stroke="#eab308" fill="none" stroke-width="3"/>
-        <path class="wire dht" d="M430 100 C 300 130, 120 288, 40 288" stroke="#0f172a" fill="none" stroke-width="3"/>
-        <!-- LDR -->
-        <path class="wire ldr" d="M430 140 C 300 140, 120 260, 40 260" stroke="#ef4444" fill="none" stroke-width="3"/>
-        <path class="wire ldr" d="M430 150 C 280 200, 120 316, 40 316" stroke="#eab308" fill="none" stroke-width="3"/>
-        <path class="wire ldr" d="M430 162 C 300 180, 120 288, 40 288" stroke="#0f172a" fill="none" stroke-width="3"/>
-        <!-- LED -->
-        <path class="wire led" d="M430 200 C 300 200, 240 130, 194 130" stroke="#eab308" fill="none" stroke-width="3"/>
-        <path class="wire led" d="M430 220 C 300 240, 120 288, 40 288" stroke="#0f172a" fill="none" stroke-width="3"/>
-        <!-- Servo -->
-        <path class="wire servo" d="M430 256 C 300 256, 120 260, 40 260" stroke="#ef4444" fill="none" stroke-width="3"/>
-        <path class="wire servo" d="M430 266 C 280 220, 240 160, 194 160" stroke="#f97316" fill="none" stroke-width="3"/>
-        <path class="wire servo" d="M430 282 C 300 300, 120 288, 40 288" stroke="#0f172a" fill="none" stroke-width="3"/>
-        <!-- LCD -->
-        <path class="wire lcd" d="M430 314 C 300 314, 120 260, 40 260" stroke="#ef4444" fill="none" stroke-width="3"/>
-        <path class="wire lcd" d="M430 324 C 300 330, 120 288, 40 288" stroke="#0f172a" fill="none" stroke-width="3"/>
-        <path class="wire lcd" d="M430 336 C 280 350, 120 350, 40 350" stroke="#a78bfa" fill="none" stroke-width="3"/>
-        <path class="wire lcd" d="M430 344 C 280 360, 120 378, 40 378" stroke="#a78bfa" fill="none" stroke-width="3"/>
+<!-- ARCHITECTURE -->
+<section id="arch"><div class="wrap">
+  <h2>Kiến trúc 3 tầng</h2>
+  <p class="lead">Đúng mô hình IoT của đề bài. Điểm mấu chốt: <b>Arduino nối Pi bằng cáp USB</b> — không dùng dây TX/RX, không cần hạ áp, hết lỗi truyền dữ liệu.</p>
+  <div class="flow">
+    <div class="step"><div class="ic">🔌</div><div class="tag">Device Layer</div><div class="lbl">Arduino Uno</div><div class="desc">Đọc cảm biến, điều khiển LED/servo, gửi JSON</div></div>
+    <div class="arrow">━ USB ▶</div>
+    <div class="step"><div class="ic">🍓</div><div class="tag">Gateway Layer</div><div class="lbl">Raspberry Pi</div><div class="desc">Nhận serial, lưu SQLite, chạy Flask</div></div>
+    <div class="arrow">▶</div>
+    <div class="step"><div class="ic">💻</div><div class="tag">App Layer</div><div class="lbl">Dashboard</div><div class="desc">Hiển thị + biểu đồ + điều khiển</div></div>
+  </div>
+  <div class="note" style="margin-top:18px">💡 <b>Luồng dữ liệu:</b> Arduino đọc cảm biến → gửi 1 dòng JSON/giây qua USB → Pi đọc <code>/dev/ttyACM0</code> → lưu SQLite → API → dashboard. Lệnh điều khiển đi ngược lại: web → Pi → Arduino.</div>
+</div></section>
 
-        <!-- USB to Pi note -->
-        <rect x="20" y="412" width="300" height="36" rx="8" fill="#7c2d1233" stroke="#f97316"/>
-        <text x="32" y="434" fill="#fdba74" font-size="11" font-weight="700">⎘ Cáp USB → Raspberry Pi (/dev/ttyACM0)</text>
-      </svg>
+<!-- WIRING -->
+<section id="wiring"><div class="wrap">
+  <h2>Đấu nối phần cứng</h2>
+  <p class="lead">Tất cả cảm biến/actuator gắn trên Arduino. <a href="wiring.html" style="color:var(--green);font-weight:700">→ Mở sơ đồ tương tác</a> (bấm từng linh kiện để xem dây nối).</p>
+  <div class="grid2" style="margin-bottom:16px">
+    <div class="imgframe"><img src="wiring.svg" alt="Sơ đồ schematic"></div>
+    <div class="imgframe"><img src="wiring-render.png" alt="Ảnh breadboard minh hoạ"></div>
+  </div>
+  <p style="color:var(--muted);font-size:12.5px;margin-bottom:18px">Trái: sơ đồ chính xác từng chân · Phải: ảnh breadboard minh hoạ (chân theo sơ đồ trái).</p>
+  <div class="grid2">
+    <div class="comp"><span class="em">🌡️</span><div><div class="t">DHT22 <span class="pin">→ D2</span></div><div class="d">Nhiệt độ + độ ẩm · VCC→5V, DATA→D2, GND→GND</div></div></div>
+    <div class="comp"><span class="em">☀️</span><div><div class="t">LDR + R10kΩ <span class="pin">→ A0</span></div><div class="d">Cảm biến sáng · cầu chia áp 5V—LDR—A0—10k—GND</div></div></div>
+    <div class="comp"><span class="em">💡</span><div><div class="t">LED + R220Ω <span class="pin">→ D7</span></div><div class="d">Đèn trồng cây · chân dài qua trở→D7, ngắn→GND</div></div></div>
+    <div class="comp"><span class="em">🪟</span><div><div class="t">Servo SG90 <span class="pin">→ D9</span><span class="opt">TUỲ CHỌN</span></div><div class="d">Cửa thông gió · Đỏ→5V, Cam→D9, Nâu→GND</div></div></div>
+    <div class="comp"><span class="em">📟</span><div><div class="t">LCD1602 I2C <span class="pin">→ A4/A5</span><span class="opt">TUỲ CHỌN</span></div><div class="d">Màn local · SDA→A4, SCL→A5, địa chỉ 0x27</div></div></div>
+    <div class="comp"><span class="em">🔗</span><div><div class="t">Arduino → Pi <span class="pin">CÁP USB</span></div><div class="d">Cắm USB vào Pi, đọc /dev/ttyACM0 · KHÔNG dùng TX/RX</div></div></div>
+  </div>
+</div></section>
 
-      <div class="legend">
-        <span><i style="background:#ef4444"></i>5V</span>
-        <span><i style="background:#0f172a;border:1px solid #475569"></i>GND</span>
-        <span><i style="background:#eab308"></i>Tín hiệu</span>
-        <span><i style="background:#f97316"></i>PWM servo</span>
-        <span><i style="background:#a78bfa"></i>I2C</span>
-      </div>
+<!-- BUILD -->
+<section id="build"><div class="wrap">
+  <h2>Lắp ráp từng bước</h2>
+  <p class="lead">Quy tắc vàng: <b>lắp tới đâu test tới đó</b>. Xong Layer 1 = đã chắc ~8 điểm. Layer 2 làm nếu còn giờ — mỗi phần độc lập, hỏng không ảnh hưởng phần khác.</p>
+
+  <div class="layerhead l1">🟢 LAYER 1 — Lõi an toàn (mục tiêu ~8 điểm)</div>
+  <ol class="steps">
+    <li><div><div class="t">Lắp DHT22 → D2</div><div class="pass">✓ PASS: Serial Monitor (9600) thấy JSON có temp, hum ≠ 0</div></div></li>
+    <li><div><div class="t">Lắp LDR → A0 (kèm trở 10kΩ)</div><div class="pass">✓ PASS: che/rọi đèn → giá trị light đổi rõ → ghi lại đặt ngưỡng</div></div></li>
+    <li><div><div class="t">Lắp LED → D7 (kèm trở 220Ω)</div><div class="pass">✓ PASS: gõ LED:1 → sáng, LED:0 → tắt</div></div></li>
+    <li><div><div class="t">Cắm cáp USB Arduino → Raspberry Pi</div><div class="pass">✓ PASS: trên Pi chạy <code>ls /dev/ttyACM*</code> thấy ttyACM0</div></div></li>
+    <li><div><div class="t">Chạy Flask, mở dashboard</div><div class="pass">✓ PASS: pill "Live" xanh, biểu đồ chạy, gạt công tắc → LED thật bật/tắt</div></div></li>
+  </ol>
+
+  <div class="layerhead l2">🟡 LAYER 2 — Tăng điểm (tuỳ chọn)</div>
+  <ol class="steps">
+    <li><div><div class="t">Servo cửa thông gió → D9</div><div class="pass">Nếu giật/reset → cấp nguồn riêng hoặc bỏ #define USE_SERVO</div></div></li>
+    <li><div><div class="t">LCD1602 I2C → A4/A5</div><div class="pass">Màn trắng → vặn contrast / đổi 0x27→0x3F / bỏ #define USE_LCD</div></div></li>
+    <li><div><div class="t">Bonus phần mềm (đã có sẵn)</div><div class="pass">Quay demo Auto↔Manual + chỉnh ngưỡng trên web</div></div></li>
+  </ol>
+  <p class="lead" style="margin-top:16px">Chi tiết đầy đủ: <a href="https://github.com/bnqtoan/smart-greenhouse-iot/blob/main/docs/BUILD_CHECKLIST.md" style="color:var(--green);font-weight:700">BUILD_CHECKLIST.md →</a></p>
+</div></section>
+
+<!-- RUN -->
+<section id="run"><div class="wrap">
+  <h2>Cách chạy</h2>
+  <div class="grid2">
+    <div>
+      <h3 style="margin-bottom:10px">1️⃣ Nạp code Arduino</h3>
+      <p style="color:var(--muted);font-size:14px;margin-bottom:10px">Cài thư viện trong Arduino IDE: <b>DHT sensor library</b> (Adafruit) + <b>LiquidCrystal_I2C</b>. Rồi nạp file:</p>
+      <pre>arduino/greenhouse/greenhouse.ino</pre>
+      <h3 style="margin:18px 0 10px">2️⃣ Chạy trên Raspberry Pi</h3>
+      <pre>cd rpi
+pip3 install -r requirements.txt
+python3 app.py</pre>
+      <p style="color:var(--muted);font-size:14px;margin-top:10px">Mở trình duyệt: <code>http://&lt;ip-của-pi&gt;:5000</code></p>
     </div>
-
-    <div class="sidebar">
-      <div class="hint">👆 Bấm linh kiện để xem cách nối:</div>
-      <button class="comp-btn" data-comp="dht"><span class="em">🌡️</span><span><span class="t">DHT22</span><br><span class="d">nhiệt độ + độ ẩm</span></span></button>
-      <button class="comp-btn" data-comp="ldr"><span class="em">☀️</span><span><span class="t">LDR</span><br><span class="d">cảm biến ánh sáng</span></span></button>
-      <button class="comp-btn" data-comp="led"><span class="em">💡</span><span><span class="t">LED</span><br><span class="d">đèn trồng cây</span></span></button>
-      <button class="comp-btn" data-comp="servo"><span class="em">🪟</span><span><span class="t">Servo SG90</span><br><span class="d">cửa thông gió</span></span><span class="opt-badge">TUỲ CHỌN</span></button>
-      <button class="comp-btn" data-comp="lcd"><span class="em">📟</span><span><span class="t">LCD1602 I2C</span><br><span class="d">màn hình local</span></span><span class="opt-badge">TUỲ CHỌN</span></button>
-
-      <div class="detail" id="detail">
-        <h3>Chọn một linh kiện</h3>
-        <p style="color:var(--muted)">Bấm vào nút phía trên để xem dây nối cụ thể tới chân Arduino.</p>
-      </div>
+    <div>
+      <h3 style="margin-bottom:10px">Dashboard trông như vầy 👇</h3>
+      <div class="imgframe"><img src="dashboard-preview.png" alt="Dashboard preview"></div>
+      <div class="note" style="margin-top:14px">🛡️ <b>Chống sập demo:</b> Không có Arduino → dashboard tự chạy chế độ <b>Simulated</b>, vẫn demo được biểu đồ + điều khiển.</div>
     </div>
   </div>
-</div>
+</div></section>
 
-<script>
-const DATA = {
-  dht:  {name:"DHT22", wires:[["#ef4444","VCC → 5V"],["#eab308","DATA → D2"],["#0f172a","GND → GND"]], note:"Module DHT22 thường có trở kéo sẵn. Nạp xong, Serial Monitor 9600 phải thấy temp/hum ≠ 0."},
-  ldr:  {name:"LDR + R10k", wires:[["#ef4444","5V → đầu LDR"],["#eab308","Điểm giữa → A0"],["#0f172a","R10k → GND"]], note:"Cầu chia áp: 5V—[LDR]—•(A0)—[10kΩ]—GND. Che/rọi đèn để chỉnh ngưỡng (mặc định 400)."},
-  led:  {name:"LED + R220Ω", wires:[["#eab308","Chân dài (+) qua trở 220Ω → D7"],["#0f172a","Chân ngắn (–) → GND"]], note:"Gõ LED:1 / LED:0 trong Serial Monitor để test bật/tắt."},
-  servo:{name:"Servo SG90 (tuỳ chọn)", wires:[["#ef4444","Đỏ → 5V"],["#f97316","Cam → D9 (PWM)"],["#0f172a","Nâu → GND"]], note:"Nếu giật/reset Arduino: cấp nguồn riêng cho servo, hoặc bỏ #define USE_SERVO."},
-  lcd:  {name:"LCD1602 I2C (tuỳ chọn)", wires:[["#ef4444","VCC → 5V"],["#0f172a","GND → GND"],["#a78bfa","SDA → A4"],["#a78bfa","SCL → A5"]], note:"Màn trắng không chữ → vặn contrast / đổi địa chỉ 0x27→0x3F / bỏ #define USE_LCD."}
-};
-const svg = document.getElementById('svg');
-const detail = document.getElementById('detail');
-let active = null;
+<!-- RUBRIC -->
+<section id="rubric"><div class="wrap">
+  <h2>Đối chiếu Rubric (mục tiêu 9–10)</h2>
+  <div class="card" style="padding:6px 8px">
+  <table>
+    <tr><th>Tiêu chí</th><th>Mức 9–10</th><th>Đã đạt</th></tr>
+    <tr><td>Arduino</td><td>≥2 cảm biến + LCD + actuator</td><td class="ok">DHT22 + LDR + LCD + LED + Servo ✓</td></tr>
+    <tr><td>Giao tiếp</td><td>Serial ổn định</td><td class="ok">USB Serial /dev/ttyACM0 ✓</td></tr>
+    <tr><td>Raspberry Pi</td><td>Flask dashboard + điều khiển</td><td class="ok">✓</td></tr>
+    <tr><td>Lưu dữ liệu</td><td>SQLite</td><td class="ok">✓</td></tr>
+    <tr><td>Dashboard</td><td>hiện tại + lịch sử + chart</td><td class="ok">✓</td></tr>
+    <tr><td>Điều khiển GUI</td><td>bắt buộc</td><td class="ok">LED/Vent/Mode/Ngưỡng ✓</td></tr>
+    <tr><td>Bonus</td><td>UI đẹp + chart + sáng tạo</td><td class="ok">+0.75 ✓</td></tr>
+  </table>
+  </div>
+</div></section>
 
-function select(comp){
-  active = comp;
-  svg.classList.add('focus');
-  // wires
-  svg.querySelectorAll('.wire').forEach(w => w.classList.toggle('on', w.classList.contains(comp)));
-  // nodes: highlight the component box + its pins
-  const pins = DATA[comp].wires.map(w => w[1].split('→').pop().trim());
-  svg.querySelectorAll('.node').forEach(n=>{
-    const isComp = n.dataset.comp===comp;
-    const isPin = pins.includes(n.dataset.pin);
-    n.classList.toggle('on', isComp || isPin);
-  });
-  // buttons
-  document.querySelectorAll('.comp-btn').forEach(b=>b.classList.toggle('active', b.dataset.comp===comp));
-  // detail
-  const d = DATA[comp];
-  detail.innerHTML = `<h3>${d.name}</h3>` +
-    d.wires.map(w=>`<div class="wire-row"><span class="swatch" style="background:${w[0]};${w[0]==='#0f172a'?'border:1px solid #475569':''}"></span>${w[1]}</div>`).join('') +
-    `<p style="color:var(--muted);margin-top:10px">${d.note}</p>`;
-}
+<!-- DOCS -->
+<section id="docs"><div class="wrap">
+  <h2>Tài liệu & nguồn</h2>
+  <p class="lead">Mọi thứ nhóm cần. Click để mở.</p>
+  <div class="doclist">
+    <a class="doc" href="wiring.html"><span class="em">🔌</span><div><div class="t">Sơ đồ đấu nối tương tác</div><div class="d">Bấm linh kiện → xem dây nối</div></div></a>
+    <a class="doc" href="https://github.com/bnqtoan/smart-greenhouse-iot/blob/main/docs/BUILD_CHECKLIST.md"><span class="em">✅</span><div><div class="t">BUILD_CHECKLIST.md</div><div class="d">Thứ tự lắp & test 2 lớp</div></div></a>
+    <a class="doc" href="https://github.com/bnqtoan/smart-greenhouse-iot/blob/main/docs/WIRING.md"><span class="em">📐</span><div><div class="t">WIRING.md</div><div class="d">Bảng pin + mạch chia áp LDR</div></div></a>
+    <a class="doc" href="https://github.com/bnqtoan/smart-greenhouse-iot/blob/main/docs/SLIDES_OUTLINE.md"><span class="em">🖼️</span><div><div class="t">SLIDES_OUTLINE.md</div><div class="d">Dàn ý slide + checklist video</div></div></a>
+    <a class="doc" href="https://github.com/bnqtoan/smart-greenhouse-iot/blob/main/arduino/greenhouse/greenhouse.ino"><span class="em">📟</span><div><div class="t">greenhouse.ino</div><div class="d">Code Arduino</div></div></a>
+    <a class="doc" href="https://github.com/bnqtoan/smart-greenhouse-iot/blob/main/rpi/app.py"><span class="em">🐍</span><div><div class="t">app.py</div><div class="d">Flask + SQLite + serial</div></div></a>
+    <a class="doc" href="https://github.com/bnqtoan/smart-greenhouse-iot"><span class="em">📦</span><div><div class="t">Toàn bộ repo GitHub</div><div class="d">Clone về máy</div></div></a>
+    <a class="doc" href="https://github.com/bnqtoan/smart-greenhouse-iot/blob/main/README.md"><span class="em">📖</span><div><div class="t">README.md</div><div class="d">Tổng quan nhanh</div></div></a>
+  </div>
+  <pre style="margin-top:18px">git clone https://github.com/bnqtoan/smart-greenhouse-iot.git</pre>
+</div></section>
 
-document.querySelectorAll('.comp-btn').forEach(b=> b.onclick = ()=>select(b.dataset.comp));
-svg.querySelectorAll('[data-comp]').forEach(g=> g.style.cursor='pointer');
-svg.querySelectorAll('.node[data-comp]').forEach(g=> g.onclick = ()=>select(g.dataset.comp));
-</script>
+<footer>
+  Smart Greenhouse · IAD591 Final Project · Arduino → USB → Raspberry Pi → Flask + SQLite<br>
+  <a href="https://github.com/bnqtoan/smart-greenhouse-iot" style="color:var(--muted)">github.com/bnqtoan/smart-greenhouse-iot</a>
+</footer>
+
 </body>
 </html>
