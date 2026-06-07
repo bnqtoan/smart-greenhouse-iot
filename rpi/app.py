@@ -133,13 +133,18 @@ def serial_loop():
             run_simulator()  # blocks until a real port appears? no -> returns periodically
         time.sleep(3)  # then retry real serial
 
+# simulator state persists across bursts so manual controls "stick"
+_sim = {"led": 0, "vent": 0, "mode": "auto", "th_temp": 30.0, "th_light": 400, "t0": None}
+
 def run_simulator():
     """Generate believable data so the demo never shows a blank dashboard.
     Honors mode + commands so controls still 'work' visually."""
     last_save = 0
-    t0 = time.time()
-    sim = {"led": 0, "vent": 0, "mode": "auto"}
-    th_temp, th_light = 30.0, 400
+    if _sim["t0"] is None:
+        _sim["t0"] = time.time()
+    t0 = _sim["t0"]
+    sim = _sim
+    th_temp, th_light = sim["th_temp"], sim["th_light"]
     # run simulator for ~5s bursts, then return so serial_loop can re-probe the port
     end = time.time() + 5
     while time.time() < end:
@@ -154,8 +159,8 @@ def run_simulator():
             elif c == "VENT:0": sim["vent"], sim["mode"] = 0, "manual"
             elif c == "MODE:AUTO": sim["mode"] = "auto"
             elif c == "MODE:MANUAL": sim["mode"] = "manual"
-            elif c.startswith("TH_TEMP:"): th_temp = float(c[8:] or 30)
-            elif c.startswith("TH_LIGHT:"): th_light = int(c[9:] or 400)
+            elif c.startswith("TH_TEMP:"): th_temp = sim["th_temp"] = float(c[8:] or 30)
+            elif c.startswith("TH_LIGHT:"): th_light = sim["th_light"] = int(c[9:] or 400)
 
         elapsed = time.time() - t0
         temp = 26 + 4 * math.sin(elapsed / 8.0)        # 22..30 C
