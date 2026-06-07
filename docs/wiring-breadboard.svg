@@ -446,6 +446,31 @@
 <path d="M836,528 Q716,250 370,314" stroke="#f4c430" stroke-width="4" fill="none" stroke-linecap="round"/>
 <path d="M864,528 Q894,244 958,278" stroke="#fbfcfe" stroke-width="7" fill="none" stroke-linecap="round"/>
 <path d="M864,528 Q894,244 958,278" stroke="#222" stroke-width="4" fill="none" stroke-linecap="round"/>
+<!-- ===== HC-05 BLUETOOTH MODULE (truyền không dây Arduino -> Pi) ===== -->
+<rect x="808" y="574" width="320" height="124" rx="16" fill="#2563eb12" stroke="#2563eb" stroke-width="2.5" stroke-dasharray="10 6"/>
+<rect x="808" y="552" width="200" height="22" rx="11" fill="#2563eb"/>
+<text x="824" y="568" font-size="12" font-weight="800" fill="#fff">📶 BLUETOOTH (không dây)</text>
+<!-- module body -->
+<rect x="930" y="592" width="160" height="86" rx="8" fill="#1e3a8a" stroke="#0b1f57" stroke-width="2"/>
+<circle cx="1066" cy="606" r="6" fill="#3b82f6"/><circle cx="1066" cy="606" r="2.5" fill="#bfdbfe"/>
+<rect x="948" y="600" width="40" height="20" rx="3" fill="#0b1f57"/>
+<text x="1010" y="640" text-anchor="middle" font-size="15" font-weight="800" fill="#fff">HC-05</text>
+<text x="1010" y="658" text-anchor="middle" font-size="10" fill="#bfdbfe">Bluetooth · 9600 baud</text>
+<!-- pin labels on module left -->
+<text x="922" y="606" text-anchor="end" font-size="9" fill="#475569">VCC</text>
+<text x="922" y="624" text-anchor="end" font-size="9" fill="#475569">GND</text>
+<text x="922" y="642" text-anchor="end" font-size="9" fill="#475569">TXD→D10</text>
+<text x="922" y="660" text-anchor="end" font-size="9" fill="#475569">RXD→D11</text>
+<!-- 4 wires curving back to Arduino right side (~370,314) -->
+<path d="M930,602 Q640,470 372,322" stroke="#fbfcfe" stroke-width="7" fill="none" stroke-linecap="round"/>
+<path d="M930,602 Q640,470 372,322" stroke="#e23b3b" stroke-width="4" fill="none" stroke-linecap="round"/>
+<path d="M930,620 Q640,500 372,330" stroke="#fbfcfe" stroke-width="7" fill="none" stroke-linecap="round"/>
+<path d="M930,620 Q640,500 372,330" stroke="#222" stroke-width="4" fill="none" stroke-linecap="round"/>
+<path d="M930,638 Q650,540 372,338" stroke="#fbfcfe" stroke-width="7" fill="none" stroke-linecap="round"/>
+<path d="M930,638 Q650,540 372,338" stroke="#16a34a" stroke-width="4" fill="none" stroke-linecap="round"/>
+<path d="M930,656 Q660,580 372,346" stroke="#fbfcfe" stroke-width="7" fill="none" stroke-linecap="round"/>
+<path d="M930,656 Q660,580 372,346" stroke="#a855f7" stroke-width="4" fill="none" stroke-linecap="round"/>
+<text x="940" y="694" text-anchor="middle" font-size="12" font-weight="800" fill="#1e3a8a">HC-05 → ARDUINO (TXD→D10, RXD→D11) · truyền JSON không dây sang Pi</text>
 <rect x="30" y="564" width="380" height="44" rx="10" fill="#fff7ed" stroke="#f08000" stroke-width="2"/>
 <text x="46" y="590" font-size="13" font-weight="800" fill="#9a3412">⎘ CÁP USB → Raspberry Pi (/dev/ttyACM0)</text>
 <text x="46" y="604" font-size="11" fill="#9a5a36">Cắm USB Arduino vào cổng USB của Pi. KHÔNG nối TX/RX.</text>
