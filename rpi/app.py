@@ -7,9 +7,8 @@ serves a Flask dashboard, and sends control commands back to Arduino.
 
 Reliability design (lab hardware is flaky):
   - Serial runs in a background thread; main web app never blocks on it.
-  - If the Arduino is not connected, falls back to SIMULATED data so the
-    dashboard + chart + controls still demo perfectly. A status flag tells
-    the UI whether data is live or simulated.
+  - If the Arduino is not connected, the dashboard shows a "Chưa kết nối
+    Arduino" status (no fake data); it auto-connects when the Arduino appears.
   - All DB writes are wrapped; a bad reading never crashes the server.
 
 Run:  python3 app.py     then open http://<pi-ip>:5000
@@ -18,7 +17,6 @@ import json
 import sqlite3
 import threading
 import time
-import math
 import os
 from datetime import datetime
 from flask import Flask, jsonify, request, render_template
@@ -33,7 +31,7 @@ APP_PORT    = 5000
 state = {
     "temp": 0.0, "hum": 0.0, "light": 0,
     "led": 0, "vent": 0, "mode": "auto",
-    "source": "starting",      # "live" | "simulated"
+    "source": "disconnected",  # "live" | "disconnected"
     "updated": None,
 }
 state_lock = threading.Lock()
@@ -72,7 +70,7 @@ def save_reading(d):
     except Exception as e:
         print("DB write skipped:", e)
 
-# ---------------- serial / simulation thread ----------------
+# ---------------- serial reader thread ----------------
 def queue_cmd(cmd):
     with cmd_lock:
         pending_cmd.append(cmd)
@@ -94,7 +92,7 @@ def update_state(d, source):
         state["updated"] = datetime.now().isoformat(timespec="seconds")
 
 def serial_loop():
-    """Try real Arduino first; if unavailable, run simulator. Auto-reconnect."""
+    """Read JSON from Arduino over serial. Auto-reconnect if unplugged."""
     last_save = 0
     while True:
         ser = None
@@ -126,57 +124,14 @@ def serial_loop():
                     save_reading(clean)
                     last_save = now
         except Exception as e:
-            print(f"[serial] not available ({e}) -> SIMULATED mode")
+            print(f"[serial] not available ({e}) -> waiting for Arduino")
             if ser:
                 try: ser.close()
                 except: pass
-            run_simulator()  # blocks until a real port appears? no -> returns periodically
+            with state_lock:
+                state["source"] = "disconnected"
+                state["updated"] = datetime.now().isoformat(timespec="seconds")
         time.sleep(3)  # then retry real serial
-
-# simulator state persists across bursts so manual controls "stick"
-_sim = {"led": 0, "vent": 0, "mode": "auto", "th_temp": 30.0, "th_light": 400, "t0": None}
-
-def run_simulator():
-    """Generate believable data so the demo never shows a blank dashboard.
-    Honors mode + commands so controls still 'work' visually."""
-    last_save = 0
-    if _sim["t0"] is None:
-        _sim["t0"] = time.time()
-    t0 = _sim["t0"]
-    sim = _sim
-    th_temp, th_light = sim["th_temp"], sim["th_light"]
-    # run simulator for ~5s bursts, then return so serial_loop can re-probe the port
-    end = time.time() + 5
-    while time.time() < end:
-        # apply queued commands to the simulated arduino
-        with cmd_lock:
-            cmds = pending_cmd[:]
-            pending_cmd.clear()
-        for c in cmds:
-            if c == "LED:1": sim["led"], sim["mode"] = 1, "manual"
-            elif c == "LED:0": sim["led"], sim["mode"] = 0, "manual"
-            elif c == "VENT:1": sim["vent"], sim["mode"] = 1, "manual"
-            elif c == "VENT:0": sim["vent"], sim["mode"] = 0, "manual"
-            elif c == "MODE:AUTO": sim["mode"] = "auto"
-            elif c == "MODE:MANUAL": sim["mode"] = "manual"
-            elif c.startswith("TH_TEMP:"): th_temp = sim["th_temp"] = float(c[8:] or 30)
-            elif c.startswith("TH_LIGHT:"): th_light = sim["th_light"] = int(c[9:] or 400)
-
-        elapsed = time.time() - t0
-        temp = 26 + 4 * math.sin(elapsed / 8.0)        # 22..30 C
-        hum = 60 + 10 * math.sin(elapsed / 11.0)       # 50..70 %
-        light = int(500 + 300 * math.sin(elapsed / 6.0))  # 200..800
-        if sim["mode"] == "auto":
-            sim["led"] = 1 if light < th_light else 0
-            sim["vent"] = 1 if temp > th_temp else 0
-        d = {"temp": round(temp, 1), "hum": round(hum, 1), "light": light,
-             "led": sim["led"], "vent": sim["vent"], "mode": sim["mode"]}
-        update_state(d, "simulated")
-        now = time.time()
-        if now - last_save >= 2:
-            save_reading(d)
-            last_save = now
-        time.sleep(1)
 
 # ---------------- Flask ----------------
 app = Flask(__name__)
