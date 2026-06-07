@@ -43,6 +43,14 @@ state_lock = threading.Lock()
 pending_cmd = []
 cmd_lock = threading.Lock()
 
+# Telegram fire-alarm notifier (reads telegram_config.json; disabled if absent)
+try:
+    from telegram_notify import TelegramNotifier
+    telegram = TelegramNotifier()
+except Exception as e:
+    print(f"[telegram] init skipped ({e})")
+    telegram = None
+
 # ---------------- database ----------------
 def db_conn():
     return sqlite3.connect(DB_PATH)
@@ -135,6 +143,8 @@ def serial_loop():
                 # label transport: bluetooth (rfcomm) vs usb
                 clean["link"] = "bluetooth" if "rfcomm" in port else "usb"
                 update_state(clean, "live")
+                if telegram:                       # remote fire alert (edge-triggered)
+                    telegram.on_state(clean["fire"], clean["temp"])
                 now = time.time()
                 if now - last_save >= 2:   # log every 2s
                     save_reading(clean)
