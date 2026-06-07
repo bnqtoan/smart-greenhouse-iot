@@ -22,8 +22,10 @@ from datetime import datetime
 from flask import Flask, jsonify, request, render_template
 
 # ---------------- config ----------------
-SERIAL_PORT = "/dev/ttyACM0"   # Arduino over USB. (Try /dev/ttyACM1 or /dev/ttyUSB0 if needed)
-BAUD_RATE   = 9600
+# Try Bluetooth (HC-05 via rfcomm) FIRST, then fall back to USB. First that
+# opens wins. This gives "Bluetooth with USB backup" automatically.
+SERIAL_PORTS = ["/dev/rfcomm0", "/dev/ttyACM0", "/dev/ttyUSB0"]
+BAUD_RATE    = 9600
 DB_PATH     = os.path.join(os.path.dirname(__file__), "greenhouse.db")
 APP_PORT    = 5000
 
@@ -32,6 +34,7 @@ state = {
     "temp": 0.0, "hum": 0.0, "light": 0,
     "led": 0, "vent": 0, "fire": 0, "mode": "auto",
     "source": "disconnected",  # "live" | "disconnected"
+    "link": "",                # "bluetooth" | "usb"
     "updated": None,
 }
 state_lock = threading.Lock()
@@ -91,16 +94,26 @@ def update_state(d, source):
         state["source"] = source
         state["updated"] = datetime.now().isoformat(timespec="seconds")
 
+def open_first_port():
+    """Open the first available port from SERIAL_PORTS (Bluetooth first, USB backup)."""
+    import serial
+    for port in SERIAL_PORTS:
+        try:
+            ser = serial.Serial(port, BAUD_RATE, timeout=1)
+            print(f"[serial] connected {port}")
+            return ser, port
+        except Exception:
+            continue
+    raise IOError("no serial port available (tried " + ", ".join(SERIAL_PORTS) + ")")
+
 def serial_loop():
-    """Read JSON from Arduino over serial. Auto-reconnect if unplugged."""
+    """Read JSON from Arduino over Bluetooth (rfcomm) or USB. Auto-reconnect."""
     last_save = 0
     while True:
         ser = None
         try:
-            import serial  # pyserial
-            ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
-            time.sleep(2)  # let Arduino reset after USB connect
-            print(f"[serial] connected {SERIAL_PORT}")
+            ser, port = open_first_port()
+            time.sleep(2)  # let Arduino settle
             while True:
                 drain_cmds(ser)
                 line = ser.readline().decode(errors="ignore").strip()
@@ -119,6 +132,8 @@ def serial_loop():
                     "fire": int(d.get("fire", 0)),
                     "mode": d.get("mode", "auto"),
                 }
+                # label transport: bluetooth (rfcomm) vs usb
+                clean["link"] = "bluetooth" if "rfcomm" in port else "usb"
                 update_state(clean, "live")
                 now = time.time()
                 if now - last_save >= 2:   # log every 2s

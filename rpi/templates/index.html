@@ -231,7 +231,9 @@ async function poll(){
     // source pill
     const live = s.source==="live";
     $("#srcDot").className = "dot" + (live?"":" sim");
-    $("#srcTxt").textContent = live ? "Live · Arduino" : "Chưa kết nối Arduino";
+    $("#srcTxt").textContent = live
+      ? ("Live · " + (s.link === "bluetooth" ? "Bluetooth 📶" : "USB"))
+      : "Chưa kết nối Arduino";
     if(s.updated) $("#upd").textContent = " · " + s.updated.slice(11,19);
 
     // sync controls
