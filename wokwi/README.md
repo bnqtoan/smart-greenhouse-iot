@@ -21,7 +21,7 @@ Trên wokwi.com → **Import** → dán link repo: `github.com/bnqtoan/smart-gre
 ## File
 | File | Vai trò |
 |---|---|
-| `diagram.json` | **Nguồn chân lý** — khai báo linh kiện + dây nối (8 part, 18 dây). Sửa file này = sửa mạch. |
+| `diagram.json` | **Nguồn chân lý** — khai báo linh kiện + dây nối (7 part, 16 dây). Sửa file này = sửa mạch. |
 | `sketch.ino` | Code mô phỏng (bản rút gọn của greenhouse.ino, chỉ logic local). |
 | `wokwi.toml` | Cấu hình project Wokwi. |
 | `libraries.txt` | Thư viện cần (DHT, Servo, LiquidCrystal_I2C). |
@@ -30,7 +30,7 @@ Trên wokwi.com → **Import** → dán link repo: `github.com/bnqtoan/smart-gre
 ```
 DHT22 DATA → D2     LDR AO → A0      LED+220Ω → D7
 Servo PWM → D9      LCD I2C → A4(SDA)/A5(SCL)
-Nguồn 5V/GND qua thanh rail breadboard
+Nguồn 5V/GND nối thẳng vào chân 5V & GND của Arduino
 ```
 
 > ⚠️ Wokwi dùng **module quang trở** (có sẵn chân AO). Phần cứng thật của nhóm
