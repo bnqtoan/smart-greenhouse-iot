@@ -62,6 +62,7 @@ DHT dht(DHT_PIN, DHT_TYPE);
 // ---- state ----
 bool   ledOn      = false;
 bool   ventOpen   = false;
+bool   ventInit   = false;     // has the servo been positioned once?
 bool   autoMode   = true;
 bool   fire       = false;     // fire/overheat alarm active
 float  thTemp     = 30.0;      // open vent above this temp
@@ -75,10 +76,20 @@ unsigned long lastReport = 0;
 const unsigned long REPORT_MS = 1000;
 
 void setVent(bool open) {
-  ventOpen = open;
 #ifdef USE_SERVO
-  vent.write(open ? 90 : 0);   // 90deg = open, 0deg = closed
+  // Only move the servo when the state actually changes. We attach -> write ->
+  // let it travel -> detach. Detaching frees Timer1 so SoftwareSerial (Bluetooth)
+  // does not disrupt the servo PWM during steady data streaming. A servo holds
+  // its position mechanically while detached.
+  if (open != ventOpen || !ventInit) {
+    vent.attach(SERVO_PIN);
+    vent.write(open ? 90 : 0);   // 90deg = open, 0deg = closed
+    delay(400);                  // give the servo time to travel
+    vent.detach();
+    ventInit = true;
+  }
 #endif
+  ventOpen = open;
 }
 
 void setLed(bool on) {
@@ -97,8 +108,7 @@ void setup() {
   dht.begin();
 
 #ifdef USE_SERVO
-  vent.attach(SERVO_PIN);
-  setVent(false);
+  setVent(false);              // attaches, closes vent, then detaches
 #endif
 
 #ifdef USE_LCD
