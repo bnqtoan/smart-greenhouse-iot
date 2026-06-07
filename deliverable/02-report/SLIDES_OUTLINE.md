@@ -12,7 +12,7 @@
    Nhấn: truyền **không dây qua Bluetooth** (/dev/rfcomm0); rớt BT thì tự fallback USB ⇒ luôn online.
 4. **Sơ đồ phần cứng / đấu nối** — ảnh breadboard + bảng pin:
    DHT22 (nhiệt+ẩm), LDR (sáng), LED grow-light D7, Servo cửa thông gió D9, **Buzzer báo cháy D8**,
-   LCD1602 I2C (A4/A5), HC-05 (Bluetooth). 7-seg 74HC595 trên Pi (tuỳ chọn).
+   LCD1602 I2C (A4/A5), HC-05 (Bluetooth).
 5. **Luồng dữ liệu** — Arduino đọc cảm biến → JSON → **Bluetooth → Pi** (USB backup) → SQLite → API → Dashboard;
    lệnh web → Pi → Arduino (LED/VENT/MODE/threshold). Sự kiện cháy → Pi → **Telegram**.
 6. **Logic tự động + BẢO VỆ** — đèn bật khi tối (light < ngưỡng); cửa mở khi nóng (temp > ngưỡng); Auto/Manual.
