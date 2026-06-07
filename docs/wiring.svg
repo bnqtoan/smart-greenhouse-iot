@@ -47,9 +47,9 @@
 
   <!-- ===================== COMPONENTS ===================== -->
 
-  <!-- DHT11 -->
+  <!-- DHT22 -->
   <rect x="540" y="190" width="200" height="80" rx="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
-  <text x="640" y="216" text-anchor="middle" class="comp">DHT11</text>
+  <text x="640" y="216" text-anchor="middle" class="comp">DHT22</text>
   <text x="640" y="234" text-anchor="middle" class="compsub">Nhiệt độ + Độ ẩm</text>
   <circle cx="560" cy="255" r="5" fill="#b91c1c"/><text x="572" y="259" class="wlabel">VCC</text>
   <circle cx="640" cy="255" r="5" fill="#eab308"/><text x="652" y="259" class="wlabel">DATA</text>
@@ -91,7 +91,7 @@
   <circle cx="712" cy="682" r="5" fill="#7c3aed"/><text x="690" y="686" class="wlabel">SCL</text>
 
   <!-- ===================== WIRES ===================== -->
-  <!-- DHT11: VCC->5V(red), DATA->D2(yellow), GND->GND(black) -->
+  <!-- DHT22: VCC->5V(red), DATA->D2(yellow), GND->GND(black) -->
   <path d="M560 255 C 360 255, 200 372, 66 372" stroke="#b91c1c" stroke-width="3" fill="none"/>
   <path d="M640 255 C 420 200, 360 302, 286 302" stroke="#eab308" stroke-width="3" fill="none"/>
   <path d="M715 255 C 460 150, 200 408, 66 408" stroke="#111827" stroke-width="3" fill="none"/>
@@ -132,7 +132,7 @@
 
   <rect x="780" y="320" width="180" height="120" rx="10" fill="#f1f5f9" stroke="#cbd5e1"/>
   <text x="792" y="344" class="comp" font-size="13">Thứ tự lắp</text>
-  <text x="792" y="366" class="legend">1. DHT11 (D2)</text>
+  <text x="792" y="366" class="legend">1. DHT22 (D2)</text>
   <text x="792" y="386" class="legend">2. LDR (A0)</text>
   <text x="792" y="406" class="legend">3. LED (D7)</text>
   <text x="792" y="426" class="legend">4. USB → Pi, chạy Flask</text>

@@ -79,7 +79,7 @@
         <g class="node" data-pin="A5"><rect x="6" y="368" width="34" height="20" rx="4" fill="#7c3aed"/><text x="23" y="382" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">A5</text></g>
 
         <!-- component nodes (right) -->
-        <g class="node" data-comp="dht"><rect x="430" y="70" width="180" height="46" rx="8" fill="#1d4ed833" stroke="#3b82f6"/><text x="520" y="92" text-anchor="middle" fill="#dbeafe" font-size="12" font-weight="700">DHT11</text><text x="520" y="108" text-anchor="middle" fill="#93c5fd" font-size="10">nhiệt độ + độ ẩm</text></g>
+        <g class="node" data-comp="dht"><rect x="430" y="70" width="180" height="46" rx="8" fill="#1d4ed833" stroke="#3b82f6"/><text x="520" y="92" text-anchor="middle" fill="#dbeafe" font-size="12" font-weight="700">DHT22</text><text x="520" y="108" text-anchor="middle" fill="#93c5fd" font-size="10">nhiệt độ + độ ẩm</text></g>
         <g class="node" data-comp="ldr"><rect x="430" y="128" width="180" height="46" rx="8" fill="#6d28d933" stroke="#a78bfa"/><text x="520" y="150" text-anchor="middle" fill="#ede9fe" font-size="12" font-weight="700">LDR + R10k</text><text x="520" y="166" text-anchor="middle" fill="#c4b5fd" font-size="10">cảm biến ánh sáng → A0</text></g>
         <g class="node" data-comp="led"><rect x="430" y="186" width="180" height="46" rx="8" fill="#ca8a0433" stroke="#eab308"/><text x="520" y="208" text-anchor="middle" fill="#fef9c3" font-size="12" font-weight="700">LED + R220Ω</text><text x="520" y="224" text-anchor="middle" fill="#fde68a" font-size="10">đèn trồng cây → D7</text></g>
         <g class="node" data-comp="servo"><rect x="430" y="244" width="180" height="46" rx="8" fill="#16a34a33" stroke="#22c55e"/><text x="520" y="266" text-anchor="middle" fill="#dcfce7" font-size="12" font-weight="700">Servo SG90 ⚙</text><text x="520" y="282" text-anchor="middle" fill="#86efac" font-size="10">cửa thông gió → D9</text></g>
@@ -123,7 +123,7 @@
 
     <div class="sidebar">
       <div class="hint">👆 Bấm linh kiện để xem cách nối:</div>
-      <button class="comp-btn" data-comp="dht"><span class="em">🌡️</span><span><span class="t">DHT11</span><br><span class="d">nhiệt độ + độ ẩm</span></span></button>
+      <button class="comp-btn" data-comp="dht"><span class="em">🌡️</span><span><span class="t">DHT22</span><br><span class="d">nhiệt độ + độ ẩm</span></span></button>
       <button class="comp-btn" data-comp="ldr"><span class="em">☀️</span><span><span class="t">LDR</span><br><span class="d">cảm biến ánh sáng</span></span></button>
       <button class="comp-btn" data-comp="led"><span class="em">💡</span><span><span class="t">LED</span><br><span class="d">đèn trồng cây</span></span></button>
       <button class="comp-btn" data-comp="servo"><span class="em">🪟</span><span><span class="t">Servo SG90</span><br><span class="d">cửa thông gió</span></span><span class="opt-badge">TUỲ CHỌN</span></button>
@@ -139,7 +139,7 @@
 
 <script>
 const DATA = {
-  dht:  {name:"DHT11", wires:[["#ef4444","VCC → 5V"],["#eab308","DATA → D2"],["#0f172a","GND → GND"]], note:"Module DHT11 thường có trở kéo sẵn. Nạp xong, Serial Monitor 9600 phải thấy temp/hum ≠ 0."},
+  dht:  {name:"DHT22", wires:[["#ef4444","VCC → 5V"],["#eab308","DATA → D2"],["#0f172a","GND → GND"]], note:"Module DHT22 thường có trở kéo sẵn. Nạp xong, Serial Monitor 9600 phải thấy temp/hum ≠ 0."},
   ldr:  {name:"LDR + R10k", wires:[["#ef4444","5V → đầu LDR"],["#eab308","Điểm giữa → A0"],["#0f172a","R10k → GND"]], note:"Cầu chia áp: 5V—[LDR]—•(A0)—[10kΩ]—GND. Che/rọi đèn để chỉnh ngưỡng (mặc định 400)."},
   led:  {name:"LED + R220Ω", wires:[["#eab308","Chân dài (+) qua trở 220Ω → D7"],["#0f172a","Chân ngắn (–) → GND"]], note:"Gõ LED:1 / LED:0 trong Serial Monitor để test bật/tắt."},
   servo:{name:"Servo SG90 (tuỳ chọn)", wires:[["#ef4444","Đỏ → 5V"],["#f97316","Cam → D9 (PWM)"],["#0f172a","Nâu → GND"]], note:"Nếu giật/reset Arduino: cấp nguồn riêng cho servo, hoặc bỏ #define USE_SERVO."},

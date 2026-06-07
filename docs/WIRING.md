@@ -11,7 +11,7 @@
 ```mermaid
 flowchart LR
     subgraph DEV["TẦNG THIẾT BỊ — Arduino Uno"]
-        DHT["DHT11<br/>VCC·DATA·GND"]
+        DHT["DHT22<br/>VCC·DATA·GND"]
         LDR["LDR + R10k<br/>(chia áp → A0)"]
         LED["LED + R220Ω<br/>→ D7"]
         SERVO["Servo SG90<br/>(tuỳ chọn → D9)"]
@@ -30,7 +30,7 @@ flowchart LR
 
 | Linh kiện | Chân Arduino | Ghi chú |
 |---|---|---|
-| DHT11 — DATA | D2 | VCC→5V, GND→GND. (module DHT11 thường có trở kéo sẵn) |
+| DHT22 — DATA | D2 | VCC→5V, GND→GND. (module DHT22 thường có trở kéo sẵn) |
 | LDR | A0 | Chia áp: 5V — LDR — A0 — R10kΩ — GND |
 | LED grow-light | D7 | Nối tiếp trở 220Ω, chân dài (+) về D7, chân ngắn về GND |
 | Servo SG90 *(opt)* | D9 (PWM) | Đỏ→5V, Nâu→GND, Cam→D9 |

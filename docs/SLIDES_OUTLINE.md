@@ -5,7 +5,7 @@
    Mục tiêu: đo nhiệt/ẩm/sáng, tự bật đèn & mở cửa thông gió, dashboard điều khiển từ xa.
 3. **Kiến trúc 3 tầng** — sơ đồ: Arduino (Device) → USB Serial → Pi (Gateway) → Flask+SQLite (App).
    Nhấn: nối USB trực tiếp ⇒ ổn định, không hạ áp.
-4. **Sơ đồ phần cứng / đấu nối** — ảnh breadboard + bảng pin (DHT11 D2, LDR A0, LED D7, Servo D9, LCD I2C).
+4. **Sơ đồ phần cứng / đấu nối** — ảnh breadboard + bảng pin (DHT22 D2, LDR A0, LED D7, Servo D9, LCD I2C).
 5. **Luồng dữ liệu** — Arduino đọc cảm biến → JSON 1s/lần → Pi parse → SQLite → API → Dashboard;
    lệnh điều khiển web → Pi → Arduino (LED/VENT/MODE/threshold).
 6. **Logic tự động** — đèn bật khi tối (light < ngưỡng); cửa mở khi nóng (temp > ngưỡng);
@@ -19,7 +19,7 @@
 ## Bảng đối chiếu rubric (đưa vào slide 9)
 | Tiêu chí | Mức 9–10 | Đã đạt |
 |---|---|---|
-| Arduino | ≥2 cảm biến + LCD + actuator | DHT11+LDR + LCD + LED+Servo ✅ |
+| Arduino | ≥2 cảm biến + LCD + actuator | DHT22+LDR + LCD + LED+Servo ✅ |
 | Giao tiếp | (Serial ổn định qua USB) | USB Serial /dev/ttyACM0 ✅ |
 | Raspberry Pi | Flask dashboard + điều khiển | ✅ |
 | Lưu dữ liệu | SQLite | ✅ |

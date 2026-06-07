@@ -46,7 +46,7 @@ const int DHT_PIN = 2;
 const int LDR_PIN = A0;        // LDR voltage divider middle -> A0
 const int LED_PIN = 7;         // single grow-light LED (+220ohm)
 
-#define DHT_TYPE DHT11
+#define DHT_TYPE DHT22      // using DHT22 (AM2302) — more accurate than DHT11
 DHT dht(DHT_PIN, DHT_TYPE);
 
 // ---- state ----

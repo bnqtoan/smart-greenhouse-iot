@@ -10,8 +10,8 @@
 
 ## ===== LAYER 1 — LÕI AN TOÀN (mục tiêu: ~8 điểm) =====
 
-### B1. DHT11 (5 phút)
-- [ ] Lắp DHT11: VCC→5V, DATA→D2, GND→GND.
+### B1. DHT22 (5 phút)
+- [ ] Lắp DHT22: VCC→5V, DATA→D2, GND→GND.
 - [ ] Nạp `greenhouse.ino`, mở Serial Monitor (9600).
 - [ ] PASS khi thấy JSON có `temp`, `hum` ≠ 0.
 
