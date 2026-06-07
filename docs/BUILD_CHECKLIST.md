@@ -1,7 +1,24 @@
 # BUILD CHECKLIST — thứ tự lắp & test (2 lớp)
 
+> 📺 **XEM SƠ ĐỒ ĐẤU NỐI TRƯỚC KHI LẮP:**
+> - Trang hướng dẫn đầy đủ: **https://bnqtoan.github.io/smart-greenhouse-iot/**
+> - Sơ đồ breadboard chính xác từng chân (có khoanh vùng Layer 1 / Layer 2): [`wiring-breadboard.svg`](./wiring-breadboard.svg)
+> - Sơ đồ tương tác (bấm linh kiện → highlight dây): [`wiring.html`](./wiring.html)
+> - Mô phỏng chạy thử online (Wokwi): xem [`../wokwi/README.md`](../wokwi/README.md)
+
 > Quy tắc vàng: **test từng phần ngay sau khi lắp**. Đừng lắp hết rồi mới bật.
 > Mỗi bước phải PASS mới qua bước sau. Layer 1 xong = đã chắc 8 điểm.
+
+## 📌 Bản đồ chân (nguồn chân lý — khớp với code & sơ đồ)
+| Linh kiện | Chân | Layer |
+|---|---|---|
+| DHT22 DATA | **D2** | 🟢 Layer 1 |
+| LDR (chia áp 10kΩ) | **A0** | 🟢 Layer 1 |
+| LED + 220Ω | **D7** | 🟢 Layer 1 |
+| Servo SG90 | **D9** | 🟡 Layer 2 |
+| LCD1602 I2C (0x27) | **A4=SDA, A5=SCL** | 🟡 Layer 2 |
+| Nguồn | 5V / GND | — |
+| Arduino → Pi | **CÁP USB** (/dev/ttyACM0) | — |
 
 ## CHUẨN BỊ (10 phút)
 - [ ] Cắm Arduino vào **laptop** (lắp/nạp code dễ hơn), sẽ chuyển sang Pi ở bước cuối.

@@ -2,7 +2,7 @@
  * Smart Greenhouse - Arduino (Device Layer)
  * IAD591 Final Project
  *
- * Reads DHT11 (temp+humidity) + LDR (light), controls LED grow-light + Servo vent.
+ * Reads DHT22 (temp+humidity) + LDR (light), controls LED grow-light + Servo vent.
  * Talks to Raspberry Pi over USB cable (Serial / 9600). NO TX/RX jumper wires.
  *
  * Protocol:
@@ -15,7 +15,7 @@
  *     TH_TEMP:30             (auto temp threshold, C)
  *     TH_LIGHT:400           (auto light threshold, raw ADC)
  *
- * LAYER 1 (safe core): DHT11 + LDR + LED  -> always works.
+ * LAYER 1 (safe core): DHT22 + LDR + LED  -> always works.
  * LAYER 2 (optional):  Servo + LCD        -> #define-guarded; remove a #define
  *                                            and that part is simply not used.
  *                                            Nothing else breaks.
@@ -99,7 +99,7 @@ void setup() {
 void readSensors() {
   float t = dht.readTemperature();
   float h = dht.readHumidity();
-  // DHT11 occasionally returns NaN; keep last good value (demo never shows junk)
+  // DHT22 occasionally returns NaN; keep last good value (demo never shows junk)
   if (!isnan(t)) temp = t;
   if (!isnan(h)) hum  = h;
   light = analogRead(LDR_PIN);   // higher value depends on wiring; calibrate threshold

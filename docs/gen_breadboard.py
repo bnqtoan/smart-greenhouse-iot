@@ -74,11 +74,11 @@ tag(452, 56, L1, "🟢 LAYER 1 — LÕI AN TOÀN (DHT22 + LDR + LED)")
 
 # Layer 2 zone A: Servo (right)
 zone(958, 332, 200, 120, L2, "#d9770612")
-tag(958, 310, L2, "🟡 LAYER 2 — TÙY CHỌN")
+tag(958, 310, L2, "🟡 LAYER 2 — TĂNG ĐIỂM (tuỳ chọn)")
 
 # Layer 2 zone B: LCD (bottom)
 zone(452, 540, 330, 158, L2, "#d9770612")
-tag(452, 518, L2, "🟡 LAYER 2 — TÙY CHỌN")
+tag(452, 518, L2, "🟡 LAYER 2 — TĂNG ĐIỂM (tuỳ chọn)")
 
 # =========================================================
 #  ARDUINO UNO  (left)
