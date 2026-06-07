@@ -38,15 +38,14 @@
 #endif
 
 #ifdef USE_SERVO
-  // ServoTimer2 uses Timer2 (NOT Timer1) so it coexists with SoftwareSerial
-  // (Bluetooth). Standard Servo lib uses Timer1 -> conflicts -> servo dies.
-  // Install: Arduino IDE -> Library Manager -> "ServoTimer2".
-  // write() takes MICROSECONDS (544..2400), not degrees.
-  #include <ServoTimer2.h>
-  ServoTimer2 vent;
+  // NO servo library -> uses NO timer -> conflicts with NOTHING.
+  // (Servo lib uses Timer1 = breaks SoftwareSerial/Bluetooth;
+  //  ServoTimer2 uses Timer2 = breaks the DHT22 timing-sensitive read.)
+  // We bit-bang the servo: feed ~20 pulses of 1000us(0deg)..2000us(90deg) at
+  // ~50Hz only when the vent changes, then stop. Servo holds position.
   const int SERVO_PIN    = 9;
-  const int SERVO_CLOSED = 700;   // us, ~0 deg
-  const int SERVO_OPEN   = 1900;  // us, ~90 deg
+  const int SERVO_CLOSED = 1000;  // us, ~0 deg
+  const int SERVO_OPEN   = 2000;  // us, ~90 deg
 #endif
 
 #ifdef USE_LCD
@@ -87,10 +86,17 @@ void setVent(bool open) {
   // servo to position, then stop (it holds mechanically). No Servo library =
   // no Timer1 clash with SoftwareSerial/Bluetooth.
   if (open != ventOpen || !ventInit) {
-    vent.attach(SERVO_PIN);
-    vent.write(open ? SERVO_OPEN : SERVO_CLOSED);   // microseconds
-    delay(400);                  // let it travel
-    vent.detach();
+    int us = open ? SERVO_OPEN : SERVO_CLOSED;
+    noInterrupts();              // clean pulses (this block is brief, ~400ms once)
+    for (int i = 0; i < 20; i++) {
+      digitalWrite(SERVO_PIN, HIGH);
+      delayMicroseconds(us);
+      digitalWrite(SERVO_PIN, LOW);
+      interrupts();
+      delay(20);                 // ~50Hz frame; allow interrupts between pulses
+      noInterrupts();
+    }
+    interrupts();
     ventInit = true;
   }
 #endif
@@ -110,6 +116,10 @@ void setup() {
   pinMode(LED_PIN, OUTPUT);
   pinMode(BUZZ_PIN, OUTPUT);
   digitalWrite(BUZZ_PIN, LOW);
+#ifdef USE_SERVO
+  pinMode(SERVO_PIN, OUTPUT);
+  digitalWrite(SERVO_PIN, LOW);
+#endif
   dht.begin();
 
 #ifdef USE_SERVO
