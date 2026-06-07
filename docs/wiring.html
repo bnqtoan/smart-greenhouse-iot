@@ -67,6 +67,8 @@
         <g class="node" data-pin="D9"><rect x="160" y="150" width="34" height="20" rx="4" fill="#1e293b"/><text x="177" y="164" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">D9</text></g>
         <!-- D2 -->
         <g class="node" data-pin="D2"><rect x="160" y="180" width="34" height="20" rx="4" fill="#1e293b"/><text x="177" y="194" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">D2</text></g>
+        <!-- D8 -->
+        <g class="node" data-pin="D8"><rect x="160" y="210" width="34" height="20" rx="4" fill="#1e293b"/><text x="177" y="224" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">D8</text></g>
         <!-- 5V -->
         <g class="node" data-pin="5V"><rect x="6" y="250" width="34" height="20" rx="4" fill="#b91c1c"/><text x="23" y="264" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">5V</text></g>
         <!-- GND -->
@@ -84,8 +86,12 @@
         <g class="node" data-comp="led"><rect x="430" y="186" width="180" height="46" rx="8" fill="#ca8a0433" stroke="#eab308"/><text x="520" y="208" text-anchor="middle" fill="#fef9c3" font-size="12" font-weight="700">LED + R220Ω</text><text x="520" y="224" text-anchor="middle" fill="#fde68a" font-size="10">đèn trồng cây → D7</text></g>
         <g class="node" data-comp="servo"><rect x="430" y="244" width="180" height="46" rx="8" fill="#16a34a33" stroke="#22c55e"/><text x="520" y="266" text-anchor="middle" fill="#dcfce7" font-size="12" font-weight="700">Servo SG90 ⚙</text><text x="520" y="282" text-anchor="middle" fill="#86efac" font-size="10">cửa thông gió → D9</text></g>
         <g class="node" data-comp="lcd"><rect x="430" y="302" width="180" height="46" rx="8" fill="#0284c733" stroke="#38bdf8"/><text x="520" y="324" text-anchor="middle" fill="#e0f2fe" font-size="12" font-weight="700">LCD1602 I2C ⚙</text><text x="520" y="340" text-anchor="middle" fill="#7dd3fc" font-size="10">SDA→A4, SCL→A5</text></g>
+        <g class="node" data-comp="buzzer"><rect x="430" y="360" width="180" height="46" rx="8" fill="#dc262633" stroke="#f87171"/><text x="520" y="382" text-anchor="middle" fill="#fee2e2" font-size="12" font-weight="700">Buzzer 🔊 🔥</text><text x="520" y="398" text-anchor="middle" fill="#fca5a5" font-size="10">còi báo cháy → D8</text></g>
 
         <!-- WIRES (data-comp groups them) -->
+        <!-- Buzzer: + -> D8, - -> GND -->
+        <path class="wire buzzer" d="M430 376 C 300 376, 240 220, 194 220" stroke="#eab308" fill="none" stroke-width="3"/>
+        <path class="wire buzzer" d="M430 392 C 300 392, 120 288, 40 288" stroke="#0f172a" fill="none" stroke-width="3"/>
         <!-- DHT -->
         <path class="wire dht" d="M430 84 C 300 84, 120 260, 40 260" stroke="#ef4444" fill="none" stroke-width="3"/>
         <path class="wire dht" d="M430 92 C 320 110, 240 190, 194 190" stroke="#eab308" fill="none" stroke-width="3"/>
@@ -128,6 +134,8 @@
       <button class="comp-btn" data-comp="led"><span class="em">💡</span><span><span class="t">LED</span><br><span class="d">đèn trồng cây</span></span></button>
       <button class="comp-btn" data-comp="servo"><span class="em">🪟</span><span><span class="t">Servo SG90</span><br><span class="d">cửa thông gió</span></span><span class="opt-badge">TUỲ CHỌN</span></button>
       <button class="comp-btn" data-comp="lcd"><span class="em">📟</span><span><span class="t">LCD1602 I2C</span><br><span class="d">màn hình local</span></span><span class="opt-badge">TUỲ CHỌN</span></button>
+      <button class="comp-btn" data-comp="buzzer"><span class="em">🔊</span><span><span class="t">Buzzer báo cháy</span><br><span class="d">còi cảnh báo cháy/quá nhiệt</span></span><span class="opt-badge" style="color:#f87171;border-color:#f8717155">LAYER 3</span></button>
+      <button class="comp-btn" data-comp="seg"><span class="em">🔢</span><span><span class="t">LED 4-digit</span><br><span class="d">trên Raspberry Pi (không qua Arduino)</span></span><span class="opt-badge" style="color:#f87171;border-color:#f8717155">LAYER 3</span></button>
 
       <div class="detail" id="detail">
         <h3>Chọn một linh kiện</h3>
@@ -143,7 +151,9 @@ const DATA = {
   ldr:  {name:"LDR + R10k", wires:[["#ef4444","5V → đầu LDR"],["#eab308","Điểm giữa → A0"],["#0f172a","R10k → GND"]], note:"Cầu chia áp: 5V—[LDR]—•(A0)—[10kΩ]—GND. Che/rọi đèn để chỉnh ngưỡng (mặc định 400)."},
   led:  {name:"LED + R220Ω", wires:[["#eab308","Chân dài (+) qua trở 220Ω → D7"],["#0f172a","Chân ngắn (–) → GND"]], note:"Gõ LED:1 / LED:0 trong Serial Monitor để test bật/tắt."},
   servo:{name:"Servo SG90 (tuỳ chọn)", wires:[["#ef4444","Đỏ → 5V"],["#f97316","Cam → D9 (PWM)"],["#0f172a","Nâu → GND"]], note:"Nếu giật/reset Arduino: cấp nguồn riêng cho servo, hoặc bỏ #define USE_SERVO."},
-  lcd:  {name:"LCD1602 I2C (tuỳ chọn)", wires:[["#ef4444","VCC → 5V"],["#0f172a","GND → GND"],["#a78bfa","SDA → A4"],["#a78bfa","SCL → A5"]], note:"Màn trắng không chữ → vặn contrast / đổi địa chỉ 0x27→0x3F / bỏ #define USE_LCD."}
+  lcd:  {name:"LCD1602 I2C (tuỳ chọn)", wires:[["#ef4444","VCC → 5V"],["#0f172a","GND → GND"],["#a78bfa","SDA → A4"],["#a78bfa","SCL → A5"]], note:"Màn trắng không chữ → vặn contrast / đổi địa chỉ 0x27→0x3F / bỏ #define USE_LCD."},
+  buzzer:{name:"Buzzer báo cháy (Layer 3)", wires:[["#eab308","+ → D8"],["#0f172a","− → GND"]], note:"Active buzzer. Code tự kêu khi temp ≥ 50°C (báo cháy/quá nhiệt) + mở cửa thông gió. Test: hơ bật lửa gần DHT22."},
+  seg:  {name:"LED 4-digit (trên Raspberry Pi)", wires:[["#eab308","DS → GPIO17"],["#eab308","STCP → GPIO27"],["#eab308","SHCP → GPIO22"],["#ef4444","VCC → 3.3V"],["#0f172a","GND → GND"]], note:"⚠️ Lắp trên breadboard riêng nối THẲNG vào Raspberry Pi (không qua Arduino). 74HC595 cấp 3.3V — không hạ áp. Pi tự đẩy nhiệt độ ra LED; cháy thì nhấp nháy 'FirE'. Đây là điểm rubric cột Pi mức 9–10."}
 };
 const svg = document.getElementById('svg');
 const detail = document.getElementById('detail');

@@ -16,6 +16,8 @@
 | LED + 220Ω | **D7** | 🟢 Layer 1 |
 | Servo SG90 | **D9** | 🟡 Layer 2 |
 | LCD1602 I2C (0x27) | **A4=SDA, A5=SCL** | 🟡 Layer 2 |
+| Buzzer (còi báo cháy) | **D8** (trên Arduino) | 🔴 Layer 3 |
+| 4-digit 7-seg + 74HC595 | **trên RASPBERRY PI** GPIO BCM 17/27/22 (3.3V) | 🔴 Layer 3 |
 | Nguồn | 5V / GND | — |
 | Arduino → Pi | **CÁP USB** (/dev/ttyACM0) | — |
 
@@ -71,7 +73,27 @@
 - [ ] Chế độ Auto/Manual đã có sẵn trên dashboard → quay demo cảnh chuyển mode.
 - [ ] Chỉnh ngưỡng trên web → quay cảnh đổi ngưỡng làm đèn/cửa đổi trạng thái.
 
+## ===== LAYER 3 — TÍNH NĂNG "ĂN ĐIỂM" (chống cháy + LED 4 digit) =====
+
+### B9. Buzzer + cảnh báo cháy/quá nhiệt (trên Arduino)  ~5 phút
+- [ ] Buzzer (loại active): chân **+ → D8**, chân **− → GND**.
+- [ ] Logic đã có sẵn trong code: `temp ≥ 50°C` → buzzer kêu + servo tự mở cửa + cờ `fire` gửi lên Pi.
+- [ ] Test: hơ bật lửa/máy sấy gần DHT22 → nhiệt tăng → buzzer kêu + dashboard hiện **banner đỏ "CẢNH BÁO CHÁY"**.
+- [ ] Đổi ngưỡng cháy: gõ `TH_FIRE:45` trong Serial Monitor (mặc định 50).
+- [ ] 💡 Câu chuyện sản phẩm: "hệ thống không chỉ giám sát mà còn **bảo vệ tài sản** khỏi cháy/quá nhiệt".
+
+### B10. LED 4 digit trên Raspberry Pi (rubric: cột Pi mức 9–10)  ~15 phút
+> ⚠️ Phần này lắp trên **breadboard riêng nối thẳng vào GPIO của Raspberry Pi** (không qua Arduino).
+> Cấp nguồn 74HC595 bằng **3.3V của Pi** — KHÔNG cần hạ áp.
+- [ ] 74HC595: VCC(16)→3.3V, GND(8)→GND, MR(10)→3.3V, OE(13)→GND.
+- [ ] DS(14)→**GPIO17**, STCP(12)→**GPIO27**, SHCP(11)→**GPIO22** (đánh số BCM).
+- [ ] Q0..Q7 → 8 thanh LED (a..g, dp) qua trở 220–330Ω.
+- [ ] 4 chân chung của 4 digit → **GPIO23, 24, 25, 12**.
+- [ ] Trên Pi: `pip3 install RPi.GPIO` rồi chạy lại `app.py`.
+- [ ] PASS: LED 4 digit hiện nhiệt độ (vd `27.5`); khi cháy → nhấp nháy **"FirE"**.
+- [ ] ⚠️ Nếu không có RPi.GPIO / chưa lắp → app vẫn chạy bình thường, chỉ là không có LED.
+
 ## DỰ PHÒNG KHI DEMO (đừng hoảng)
-- Arduino không nhận? Dashboard tự chuyển **"Demo · Simulated"** → vẫn trình bày được chart + điều khiển, không sập.
-- Sai cổng serial → sửa `SERIAL_PORT`.
-- Một module hỏng → tháo `#define` tương ứng, nạp lại, phần còn lại vẫn chạy.
+- Arduino chưa cắm? Dashboard hiện **"Chưa kết nối Arduino"** (không có dữ liệu giả), tự nối lại khi cắm Arduino.
+- Sai cổng serial → sửa `SERIAL_PORT` trong `app.py`.
+- Module hỏng (servo/LCD/buzzer/4-digit) → tháo ra hoặc bỏ `#define`/không cài RPi.GPIO; phần còn lại vẫn chạy.

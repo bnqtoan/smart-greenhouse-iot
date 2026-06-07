@@ -33,9 +33,26 @@ flowchart LR
 | DHT22 — DATA | D2 | VCC→5V, GND→GND. (module DHT22 thường có trở kéo sẵn) |
 | LDR | A0 | Chia áp: 5V — LDR — A0 — R10kΩ — GND |
 | LED grow-light | D7 | Nối tiếp trở 220Ω, chân dài (+) về D7, chân ngắn về GND |
-| Servo SG90 *(opt)* | D9 (PWM) | Đỏ→5V, Nâu→GND, Cam→D9 |
-| LCD1602 I2C *(opt)* | A4=SDA, A5=SCL | VCC→5V, GND→GND, địa chỉ 0x27 (nếu trắng màn → đổi 0x3F) |
+| Servo SG90 *(L2)* | D9 (PWM) | Đỏ→5V, Nâu→GND, Cam→D9 |
+| LCD1602 I2C *(L2)* | A4=SDA, A5=SCL | VCC→5V, GND→GND, địa chỉ 0x27 (nếu trắng màn → đổi 0x3F) |
+| Buzzer báo cháy *(L3)* | D8 | Active buzzer: + → D8, − → GND. Kêu khi `temp ≥ 50°C` |
 | Arduino → Pi | **Cáp USB** | KHÔNG dùng TX/RX. Pi đọc /dev/ttyACM0 |
+
+### LED 4 digit — lắp trên RASPBERRY PI (Layer 3, không qua Arduino)
+Dùng 74HC595 + 4-digit 7-seg trên breadboard riêng, cấp **3.3V từ Pi** (không hạ áp).
+
+| 74HC595 | Pi (BCM) | Ghi chú |
+|---|---|---|
+| DS (14) | GPIO17 | data |
+| STCP (12) | GPIO27 | latch |
+| SHCP (11) | GPIO22 | clock |
+| VCC (16), MR (10) | 3.3V | |
+| GND (8), OE (13) | GND | OE→GND để bật output |
+| Q0..Q7 | a,b,c,d,e,f,g,dp | qua trở 220–330Ω |
+| 4 chân digit chung | GPIO23,24,25,12 | LOW = bật digit |
+
+Pi tự đẩy nhiệt độ ra LED 4 digit (hiện `27.5`); khi cháy nhấp nháy `FirE`.
+→ Đúng yêu cầu rubric cột **Raspberry Pi mức 9–10 ("LED 4 digit")**: chính Pi điều khiển hiển thị.
 
 ## Mạch chia áp LDR (chi tiết)
 ```

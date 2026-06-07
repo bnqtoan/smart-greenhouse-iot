@@ -17,7 +17,7 @@ Pin map (matches greenhouse.ino):
 Run:  python3 gen_breadboard.py  ->  writes wiring-breadboard.svg
 """
 
-W, H = 1180, 820
+W, H = 1180, 880
 parts = []
 def add(s): parts.append(s)
 
@@ -105,8 +105,9 @@ def header_pin(x,y,label,side="top"):
         add(f'<text x="{x}" y="{y+22}" text-anchor="middle" font-size="11" font-weight="700" fill="#063">{label}</text>')
 
 # digital pins along top edge
-D7  = (AX+250, top_y); header_pin(*D7,"D7")
-D9  = (AX+290, top_y); header_pin(*D9,"D9~")
+D7  = (AX+230, top_y); header_pin(*D7,"D7")
+D9  = (AX+270, top_y); header_pin(*D9,"D9~")
+D8  = (AX+310, top_y); header_pin(*D8,"D8")
 D2  = (AX+150, top_y); header_pin(*D2,"D2")
 # power+analog along bottom edge
 bot_y = AY+AH-14
@@ -251,6 +252,32 @@ wire(lcd_sda[0], lcd_sda[1]+14, A4[0], A4[1], BLU, mid=(A4[0], 560))
 wire(lcd_scl[0], lcd_scl[1]+14, A5[0], A5[1], BLU, mid=(A5[0]+40, 560))
 
 # =========================================================
+#  COMPONENT: Buzzer (Layer 3 — fire alarm)  on Arduino D8
+# =========================================================
+BZX, BZY = 820, 470
+add(f'<circle cx="{BZX+30}" cy="{BZY+30}" r="30" fill="#1f2937" stroke="#0b1220" stroke-width="2"/>')
+add(f'<circle cx="{BZX+30}" cy="{BZY+30}" r="6" fill="#0b1220"/>')
+add(f'<text x="{BZX+30}" y="{BZY+78}" text-anchor="middle" font-size="13" font-weight="800" fill="#0f172a">Buzzer 🔊</text>')
+add(f'<text x="{BZX+30}" y="{BZY+94}" text-anchor="middle" font-size="10" fill="#475569">còi báo cháy → D8</text>')
+bz_pos=(BZX+16, BZY+58); bz_neg=(BZX+44, BZY+58)
+add(f'<text x="{bz_pos[0]}" y="{bz_pos[1]+6}" text-anchor="middle" font-size="10" fill="#b91c1c">+</text>')
+add(f'<text x="{bz_neg[0]}" y="{bz_neg[1]+6}" text-anchor="middle" font-size="10" fill="#111">−</text>')
+# wires: + -> D8, - -> GND rail
+wire(bz_pos[0], bz_pos[1], D8[0], D8[1], YEL, mid=(bz_pos[0]-120, 250))
+wire(bz_neg[0], bz_neg[1], Pg(18)[0], Pg(18)[1], BLK, mid=(bz_neg[0]+30, RAILY-6))
+
+# =========================================================
+#  PI 4-DIGIT callout (Layer 3 — lives on the Raspberry Pi, not Arduino)
+# =========================================================
+PDX, PDY = 820, 600
+zone(PDX-12, PDY-26, 320, 118, L2, "#d9770612")  # reuse amber-ish zone style
+add(f'<rect x="{PDX}" y="{PDY}" width="240" height="60" rx="8" fill="#111827" stroke="#374151"/>')
+for i in range(4):
+    add(f'<rect x="{PDX+18+i*54}" y="{PDY+12}" width="36" height="36" rx="3" fill="#7f1d1d"/>')
+    add(f'<text x="{PDX+36+i*54}" y="{PDY+38}" text-anchor="middle" font-size="22" font-weight="800" fill="#fca5a5">{["2","7","5","C"][i]}</text>')
+add(f'<text x="{PDX+120}" y="{PDY+78}" text-anchor="middle" font-size="12" font-weight="800" fill="#9a3412">LED 4-digit → nối thẳng RASPBERRY PI (74HC595, GPIO 3.3V)</text>')
+
+# =========================================================
 #  USB-to-Pi callout
 # =========================================================
 add(f'<rect x="{AX-30}" y="{AY+AH+24}" width="380" height="44" rx="10" fill="#fff7ed" stroke="{ORN}" stroke-width="2"/>')
@@ -258,14 +285,15 @@ add(f'<text x="{AX-14}" y="{AY+AH+50}" font-size="13" font-weight="800" fill="#9
 add(f'<text x="{AX-14}" y="{AY+AH+64}" font-size="11" fill="#9a5a36">Cắm USB Arduino vào cổng USB của Pi. KHÔNG nối TX/RX.</text>')
 
 # ---------- two-layer strategy note ----------
-NY = 720
-add(f'<rect x="28" y="{NY}" width="1124" height="78" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>')
-add(f'<rect x="28" y="{NY}" width="10" height="78" rx="5" fill="{L1}"/>')
-add(f'<text x="52" y="{NY+24}" font-size="14" font-weight="800" fill="#166534">🟢 LAYER 1 — lắp &amp; test TRƯỚC (mục tiêu ~8 điểm):</text>')
-add(f'<text x="360" y="{NY+24}" font-size="13" fill="#334155">DHT22 (D2) + LDR (A0) + LED (D7) + cáp USB → Pi → Flask. Đủ rubric cơ bản, ít dây, khó hỏng.</text>')
-add(f'<text x="52" y="{NY+50}" font-size="14" font-weight="800" fill="#9a3412">🟡 LAYER 2 — thêm NẾU còn giờ (tăng điểm):</text>')
-add(f'<text x="360" y="{NY+50}" font-size="13" fill="#334155">Servo cửa thông gió (D9) + LCD1602 I2C (A4/A5). Mỗi phần độc lập — bỏ #define là tháo được, không ảnh hưởng Layer 1.</text>')
-add(f'<text x="52" y="{NY+70}" font-size="12" fill="#64748b">Quy tắc: lắp xong Layer 1, test PASS rồi mới đụng Layer 2. Linh kiện Layer 2 hỏng → demo vẫn chạy bình thường.</text>')
+NY = 780
+add(f'<rect x="28" y="{NY}" width="1124" height="92" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>')
+add(f'<rect x="28" y="{NY}" width="10" height="92" rx="5" fill="{L1}"/>')
+add(f'<text x="52" y="{NY+24}" font-size="13.5" font-weight="800" fill="#166534">🟢 LAYER 1 (lắp trước, ~8đ):</text>')
+add(f'<text x="270" y="{NY+24}" font-size="12.5" fill="#334155">DHT22 (D2) + LDR (A0) + LED (D7) + cáp USB → Pi → Flask. Ít dây, khó hỏng.</text>')
+add(f'<text x="52" y="{NY+48}" font-size="13.5" font-weight="800" fill="#b45309">🟡 LAYER 2 (tăng điểm):</text>')
+add(f'<text x="270" y="{NY+48}" font-size="12.5" fill="#334155">Servo cửa thông gió (D9) + LCD1602 I2C (A4/A5). Mỗi phần độc lập, tháo được.</text>')
+add(f'<text x="52" y="{NY+72}" font-size="13.5" font-weight="800" fill="#991b1b">🔴 LAYER 3 (ăn điểm):</text>')
+add(f'<text x="270" y="{NY+72}" font-size="12.5" fill="#334155">Buzzer báo cháy (D8, temp≥50°C) + LED 4-digit trên RASPBERRY PI (74HC595, GPIO 3.3V).</text>')
 
 add('</svg>')
 

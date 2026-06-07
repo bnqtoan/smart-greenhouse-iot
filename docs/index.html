@@ -79,6 +79,7 @@
     padding:6px 14px;border-radius:999px;margin:18px 0 12px}
   .l1{background:#10b98122;color:var(--green);border:1px solid #10b98144}
   .l2{background:#fbbf2422;color:var(--amber);border:1px solid #fbbf2444}
+  .l3{background:#dc262622;color:#f87171;border:1px solid #dc262644}
 
   /* run code */
   pre{background:#060a12;border:1px solid var(--stroke);border-radius:12px;padding:16px;overflow-x:auto;
@@ -140,7 +141,8 @@
   <p class="lead">Mô phỏng một nhà kính tự động: cảm biến đo môi trường → tự bật đèn khi tối, mở cửa khi nóng → hiển thị & điều khiển trên dashboard web.</p>
   <div class="grid3">
     <div class="card"><div style="font-size:30px">📡</div><h3 style="margin:8px 0 4px">Thu thập</h3><p style="color:var(--muted);font-size:14px">DHT22 đo nhiệt/ẩm, LDR đo ánh sáng — đọc liên tục mỗi giây.</p></div>
-    <div class="card"><div style="font-size:30px">🤖</div><h3 style="margin:8px 0 4px">Tự động</h3><p style="color:var(--muted);font-size:14px">Tối → bật đèn trồng cây. Nóng → mở cửa thông gió (servo). Có chế độ Auto/Manual.</p></div>
+    <div class="card"><div style="font-size:30px">🤖</div><h3 style="margin:8px 0 4px">Tự động</h3><p style="color:var(--muted);font-size:14px">Tối → bật đèn trồng cây. Nóng → mở cửa thông gió. Có chế độ Auto/Manual.</p></div>
+    <div class="card" style="border-color:#dc262644"><div style="font-size:30px">🔥</div><h3 style="margin:8px 0 4px">Bảo vệ chống cháy</h3><p style="color:var(--muted);font-size:14px">Quá nhiệt (≥50°C) → còi báo động + mở cửa thoát nhiệt + cảnh báo đỏ. Không chỉ giám sát — còn bảo vệ tài sản.</p></div>
     <div class="card"><div style="font-size:30px">📊</div><h3 style="margin:8px 0 4px">Giám sát</h3><p style="color:var(--muted);font-size:14px">Dashboard web: số liệu realtime, biểu đồ lịch sử, điều khiển từ xa, lưu SQLite.</p></div>
   </div>
 </div></section>
@@ -171,6 +173,8 @@
     <div class="comp"><span class="em">💡</span><div><div class="t">LED + R220Ω <span class="pin">→ D7</span></div><div class="d">Đèn trồng cây · chân dài qua trở→D7, ngắn→GND</div></div></div>
     <div class="comp"><span class="em">🪟</span><div><div class="t">Servo SG90 <span class="pin">→ D9</span><span class="opt">TUỲ CHỌN</span></div><div class="d">Cửa thông gió · Đỏ→5V, Cam→D9, Nâu→GND</div></div></div>
     <div class="comp"><span class="em">📟</span><div><div class="t">LCD1602 I2C <span class="pin">→ A4/A5</span><span class="opt">TUỲ CHỌN</span></div><div class="d">Màn local · SDA→A4, SCL→A5, địa chỉ 0x27</div></div></div>
+    <div class="comp"><span class="em">🔊</span><div><div class="t">Buzzer báo cháy <span class="pin">→ D8</span><span class="opt" style="color:#f87171;border-color:#f8717155">LAYER 3</span></div><div class="d">Còi kêu khi temp ≥ 50°C · + → D8, − → GND</div></div></div>
+    <div class="comp"><span class="em">🔢</span><div><div class="t">LED 4-digit <span class="pin">→ Pi GPIO</span><span class="opt" style="color:#f87171;border-color:#f8717155">LAYER 3</span></div><div class="d">Trên Raspberry Pi · 74HC595 BCM 17/27/22 (3.3V)</div></div></div>
     <div class="comp"><span class="em">🔗</span><div><div class="t">Arduino → Pi <span class="pin">CÁP USB</span></div><div class="d">Cắm USB vào Pi, đọc /dev/ttyACM0 · KHÔNG dùng TX/RX</div></div></div>
   </div>
 </div></section>
@@ -194,6 +198,12 @@
     <li><div><div class="t">Servo cửa thông gió → D9</div><div class="pass">Nếu giật/reset → cấp nguồn riêng hoặc bỏ #define USE_SERVO</div></div></li>
     <li><div><div class="t">LCD1602 I2C → A4/A5</div><div class="pass">Màn trắng → vặn contrast / đổi 0x27→0x3F / bỏ #define USE_LCD</div></div></li>
     <li><div><div class="t">Bonus phần mềm (đã có sẵn)</div><div class="pass">Quay demo Auto↔Manual + chỉnh ngưỡng trên web</div></div></li>
+  </ol>
+
+  <div class="layerhead l3">🔴 LAYER 3 — Tính năng "ăn điểm"</div>
+  <ol class="steps">
+    <li><div><div class="t">🔥 Buzzer + chống cháy/quá nhiệt → D8 (Arduino)</div><div class="pass">temp ≥ 50°C → còi kêu + cửa tự mở + dashboard banner đỏ. Demo: hơ bật lửa gần DHT22.</div></div></li>
+    <li><div><div class="t">🔢 LED 4-digit trên Raspberry Pi (74HC595, GPIO 3.3V)</div><div class="pass">Pi tự hiển thị nhiệt độ; cháy → nhấp nháy "FirE". Đúng rubric cột Pi mức 9–10.</div></div></li>
   </ol>
   <p class="lead" style="margin-top:16px">Chi tiết đầy đủ: <a href="https://github.com/bnqtoan/smart-greenhouse-iot/blob/main/docs/BUILD_CHECKLIST.md" style="color:var(--green);font-weight:700">BUILD_CHECKLIST.md →</a></p>
 </div></section>
@@ -228,11 +238,11 @@ python3 app.py</pre>
     <tr><th>Tiêu chí</th><th>Mức 9–10</th><th>Đã đạt</th></tr>
     <tr><td>Arduino</td><td>≥2 cảm biến + LCD + actuator</td><td class="ok">DHT22 + LDR + LCD + LED + Servo ✓</td></tr>
     <tr><td>Giao tiếp</td><td>Serial ổn định</td><td class="ok">USB Serial /dev/ttyACM0 ✓</td></tr>
-    <tr><td>Raspberry Pi</td><td>Flask dashboard + điều khiển</td><td class="ok">✓</td></tr>
+    <tr><td>Raspberry Pi</td><td>Flask + điều khiển + <b>LED 4 digit</b></td><td class="ok">Flask + control + LED 4-digit (Pi) ✓</td></tr>
     <tr><td>Lưu dữ liệu</td><td>SQLite</td><td class="ok">✓</td></tr>
     <tr><td>Dashboard</td><td>hiện tại + lịch sử + chart</td><td class="ok">✓</td></tr>
     <tr><td>Điều khiển GUI</td><td>bắt buộc</td><td class="ok">LED/Vent/Mode/Ngưỡng ✓</td></tr>
-    <tr><td>Bonus</td><td>UI đẹp + chart + sáng tạo</td><td class="ok">+0.75 ✓</td></tr>
+    <tr><td>Bonus</td><td>UI đẹp + chart + sáng tạo</td><td class="ok">+ chống cháy/quá nhiệt 🔥 ✓</td></tr>
   </table>
   </div>
 </div></section>
