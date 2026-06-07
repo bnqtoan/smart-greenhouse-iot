@@ -87,16 +87,17 @@ void setVent(bool open) {
   // no Timer1 clash with SoftwareSerial/Bluetooth.
   if (open != ventOpen || !ventInit) {
     int us = open ? SERVO_OPEN : SERVO_CLOSED;
-    noInterrupts();              // clean pulses (this block is brief, ~400ms once)
-    for (int i = 0; i < 20; i++) {
+    // 50 frames (~1s) for a strong, reliable move. Interrupts OFF only during
+    // the short HIGH pulse so it's accurate; ON during the 20ms gap so
+    // SoftwareSerial keeps working.
+    for (int i = 0; i < 50; i++) {
+      noInterrupts();
       digitalWrite(SERVO_PIN, HIGH);
       delayMicroseconds(us);
       digitalWrite(SERVO_PIN, LOW);
       interrupts();
-      delay(20);                 // ~50Hz frame; allow interrupts between pulses
-      noInterrupts();
+      delay(20);                 // ~50Hz servo frame
     }
-    interrupts();
     ventInit = true;
   }
 #endif
