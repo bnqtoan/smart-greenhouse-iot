@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Greenhouse · IoT Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#0a0f1a; --bg2:#0e1626;
+    --card:rgba(255,255,255,.06); --stroke:rgba(255,255,255,.12);
+    --txt:#e8eef7; --muted:#8aa0bd;
+    --green:#34d399; --blue:#60a5fa; --amber:#fbbf24; --red:#f87171; --violet:#a78bfa;
+    --shadow:0 8px 32px rgba(0,0,0,.45);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    color:var(--txt);min-height:100vh;
+    background:
+      radial-gradient(900px 500px at 12% -10%, #16324f55, transparent),
+      radial-gradient(800px 500px at 110% 10%, #1f2a4a66, transparent),
+      linear-gradient(160deg,var(--bg),var(--bg2));
+    padding:24px;
+  }
+  .wrap{max-width:1180px;margin:0 auto}
+  header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:22px}
+  .brand{display:flex;align-items:center;gap:14px}
+  .logo{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:24px;
+    background:linear-gradient(135deg,#10b981,#059669);box-shadow:0 6px 20px #10b98155}
+  h1{font-size:22px;font-weight:700;letter-spacing:.3px}
+  .sub{color:var(--muted);font-size:13px}
+  .pill{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;
+    padding:7px 13px;border-radius:999px;border:1px solid var(--stroke);background:var(--card);backdrop-filter:blur(8px)}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
+  .dot.sim{background:var(--amber);box-shadow:0 0 10px var(--amber)}
+
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}
+  @media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:520px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--stroke);border-radius:20px;padding:18px 20px;
+    backdrop-filter:blur(14px);box-shadow:var(--shadow)}
+  .metric .top{display:flex;align-items:center;justify-content:space-between}
+  .metric .label{color:var(--muted);font-size:13px;font-weight:600}
+  .metric .ic{font-size:20px}
+  .metric .val{font-size:38px;font-weight:800;margin-top:6px;line-height:1}
+  .metric .unit{font-size:15px;color:var(--muted);font-weight:600;margin-left:4px}
+  .bar{height:6px;border-radius:6px;background:rgba(255,255,255,.08);margin-top:14px;overflow:hidden}
+  .bar > i{display:block;height:100%;border-radius:6px;transition:width .5s ease}
+
+  .two{display:grid;grid-template-columns:1.6fr 1fr;gap:16px}
+  @media(max-width:900px){.two{grid-template-columns:1fr}}
+  .card h3{font-size:14px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px}
+  .chart-box{height:300px}
+
+  .ctl{display:flex;flex-direction:column;gap:14px}
+  .mode-row{display:flex;gap:8px}
+  .seg{flex:1;display:flex;background:rgba(255,255,255,.05);border:1px solid var(--stroke);border-radius:12px;padding:4px}
+  .seg button{flex:1;border:0;background:transparent;color:var(--muted);font-weight:700;font-size:13px;
+    padding:9px;border-radius:9px;cursor:pointer;transition:.2s}
+  .seg button.on{background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;box-shadow:0 4px 14px #2563eb55}
+
+  .toggle{display:flex;align-items:center;justify-content:space-between;
+    padding:14px 16px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(--stroke)}
+  .toggle .name{font-weight:700;font-size:14px;display:flex;align-items:center;gap:9px}
+  .toggle .state{font-size:12px;color:var(--muted)}
+  .sw{width:52px;height:28px;border-radius:999px;background:rgba(255,255,255,.15);position:relative;cursor:pointer;transition:.25s;border:0}
+  .sw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:.25s}
+  .sw.on{background:linear-gradient(135deg,#34d399,#10b981)}
+  .sw.on::after{left:27px}
+  .sw:disabled{opacity:.45;cursor:not-allowed}
+  .hint{font-size:11.5px;color:var(--muted);text-align:center;margin-top:2px}
+  .thr{display:flex;gap:10px}
+  .thr label{flex:1;font-size:12px;color:var(--muted)}
+  .thr input{width:100%;margin-top:5px;padding:8px 10px;border-radius:10px;border:1px solid var(--stroke);
+    background:rgba(0,0,0,.25);color:var(--txt);font-size:14px}
+  .thr button{align-self:flex-end;padding:9px 14px;border:0;border-radius:10px;cursor:pointer;font-weight:700;
+    background:linear-gradient(135deg,#a78bfa,#7c3aed);color:#fff}
+  footer{text-align:center;color:var(--muted);font-size:12px;margin-top:22px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="logo">🌱</div>
+      <div>
+        <h1>Smart Greenhouse</h1>
+        <div class="sub">IoT Monitoring & Control · IAD591</div>
+      </div>
+    </div>
+    <div class="pill"><span id="srcDot" class="dot"></span><span id="srcTxt">Connecting…</span><span id="upd" style="color:var(--muted);font-weight:500"></span></div>
+  </header>
+
+  <!-- metric cards -->
+  <div class="grid">
+    <div class="card metric">
+      <div class="top"><span class="label">Nhiệt độ</span><span class="ic">🌡️</span></div>
+      <div><span class="val" id="mTemp">--</span><span class="unit">°C</span></div>
+      <div class="bar"><i id="bTemp" style="width:0;background:linear-gradient(90deg,#fbbf24,#f87171)"></i></div>
+    </div>
+    <div class="card metric">
+      <div class="top"><span class="label">Độ ẩm</span><span class="ic">💧</span></div>
+      <div><span class="val" id="mHum">--</span><span class="unit">%</span></div>
+      <div class="bar"><i id="bHum" style="width:0;background:linear-gradient(90deg,#60a5fa,#3b82f6)"></i></div>
+    </div>
+    <div class="card metric">
+      <div class="top"><span class="label">Ánh sáng</span><span class="ic">☀️</span></div>
+      <div><span class="val" id="mLight">--</span><span class="unit">lux*</span></div>
+      <div class="bar"><i id="bLight" style="width:0;background:linear-gradient(90deg,#a78bfa,#fbbf24)"></i></div>
+    </div>
+    <div class="card metric">
+      <div class="top"><span class="label">Chế độ</span><span class="ic">⚙️</span></div>
+      <div><span class="val" id="mMode" style="font-size:30px;margin-top:10px">--</span></div>
+      <div class="hint" style="text-align:left;margin-top:12px" id="actuStatus">Đèn: -- · Cửa: --</div>
+    </div>
+  </div>
+
+  <div class="two">
+    <!-- chart -->
+    <div class="card">
+      <h3>Lịch sử dữ liệu (realtime)</h3>
+      <div class="chart-box"><canvas id="chart"></canvas></div>
+    </div>
+
+    <!-- controls -->
+    <div class="card">
+      <h3>Điều khiển</h3>
+      <div class="ctl">
+        <div class="seg" id="modeSeg">
+          <button data-mode="auto" class="on">🤖 AUTO</button>
+          <button data-mode="manual">✋ MANUAL</button>
+        </div>
+
+        <div class="toggle">
+          <div><div class="name">💡 Đèn trồng cây</div><div class="state" id="ledState">--</div></div>
+          <button class="sw" id="ledSw"></button>
+        </div>
+
+        <div class="toggle">
+          <div><div class="name">🪟 Cửa thông gió</div><div class="state" id="ventState">--</div></div>
+          <button class="sw" id="ventSw"></button>
+        </div>
+        <div class="hint" id="manualHint">Chuyển sang MANUAL để điều khiển tay</div>
+
+        <div class="thr">
+          <label>Ngưỡng nhiệt (°C)<input type="number" id="thTemp" value="30"></label>
+          <label>Ngưỡng sáng<input type="number" id="thLight" value="400"></label>
+          <button id="applyThr">Áp dụng</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>Arduino (Device) → USB Serial → Raspberry Pi (Gateway) → Flask + SQLite (App) · *ánh sáng đọc thô từ LDR</footer>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+let cur = {mode:"auto", led:0, vent:0};
+
+// ---- Chart ----
+let chart;
+function initChart(){
+  if(typeof Chart === "undefined") return; // CDN blocked -> skip gracefully
+  const ctx = $("#chart").getContext("2d");
+  const mk = (c)=>{const g=ctx.createLinearGradient(0,0,0,300);g.addColorStop(0,c+"55");g.addColorStop(1,c+"00");return g;};
+  chart = new Chart(ctx,{
+    type:"line",
+    data:{labels:[],datasets:[
+      {label:"Nhiệt độ °C",data:[],borderColor:"#f87171",backgroundColor:mk("#f87171"),fill:true,tension:.4,pointRadius:0,borderWidth:2},
+      {label:"Độ ẩm %",data:[],borderColor:"#60a5fa",backgroundColor:mk("#60a5fa"),fill:true,tension:.4,pointRadius:0,borderWidth:2},
+      {label:"Ánh sáng",data:[],borderColor:"#a78bfa",backgroundColor:mk("#a78bfa"),fill:true,tension:.4,pointRadius:0,borderWidth:2,yAxisID:"y1"},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{intersect:false,mode:"index"},
+      plugins:{legend:{labels:{color:"#cbd5e1",usePointStyle:true,boxWidth:8}}},
+      scales:{
+        x:{ticks:{color:"#6b7e99",maxTicksLimit:6},grid:{color:"rgba(255,255,255,.05)"}},
+        y:{ticks:{color:"#6b7e99"},grid:{color:"rgba(255,255,255,.05)"}},
+        y1:{position:"right",ticks:{color:"#6b7e99"},grid:{drawOnChartArea:false}}
+      }}
+  });
+}
+async function loadHistory(){
+  try{
+    const r = await fetch("/api/history?limit=40"); const h = await r.json();
+    if(!chart) return;
+    chart.data.labels = h.map(x=>x.ts.slice(11,19));
+    chart.data.datasets[0].data = h.map(x=>x.temp);
+    chart.data.datasets[1].data = h.map(x=>x.hum);
+    chart.data.datasets[2].data = h.map(x=>x.light);
+    chart.update("none");
+  }catch(e){}
+}
+
+// ---- live state ----
+function setBar(id,pct){ $(id).style.width = Math.max(0,Math.min(100,pct))+"%"; }
+async function poll(){
+  try{
+    const r = await fetch("/api/state"); const s = await r.json();
+    cur = {mode:s.mode, led:s.led, vent:s.vent};
+    $("#mTemp").textContent = s.temp.toFixed(1);
+    $("#mHum").textContent  = s.hum.toFixed(0);
+    $("#mLight").textContent= s.light;
+    $("#mMode").textContent = s.mode==="auto" ? "AUTO" : "MANUAL";
+    setBar("#bTemp",  (s.temp/40)*100);
+    setBar("#bHum",   s.hum);
+    setBar("#bLight", (s.light/1023)*100);
+    $("#actuStatus").textContent = `Đèn: ${s.led?"BẬT":"TẮT"} · Cửa: ${s.vent?"MỞ":"ĐÓNG"}`;
+
+    // source pill
+    const live = s.source==="live";
+    $("#srcDot").className = "dot" + (live?"":" sim");
+    $("#srcTxt").textContent = live ? "Live · Arduino" : "Demo · Simulated";
+    if(s.updated) $("#upd").textContent = " · " + s.updated.slice(11,19);
+
+    // sync controls
+    $("#ledSw").className  = "sw" + (s.led?" on":"");
+    $("#ventSw").className = "sw" + (s.vent?" on":"");
+    $("#ledState").textContent  = s.led?"Đang BẬT":"Đang TẮT";
+    $("#ventState").textContent = s.vent?"Đang MỞ":"Đang ĐÓNG";
+    document.querySelectorAll("#modeSeg button").forEach(b=>
+      b.classList.toggle("on", b.dataset.mode===s.mode));
+    const manual = s.mode==="manual";
+    $("#ledSw").disabled = !manual; $("#ventSw").disabled = !manual;
+    $("#manualHint").style.display = manual ? "none":"block";
+  }catch(e){}
+}
+
+async function ctl(action,extra){
+  await fetch("/api/control",{method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(Object.assign({action},extra||{}))});
+  poll();
+}
+
+// ---- wire up ----
+document.querySelectorAll("#modeSeg button").forEach(b=>
+  b.onclick = ()=> ctl(b.dataset.mode==="auto"?"mode_auto":"mode_manual"));
+$("#ledSw").onclick  = ()=>{ if(cur.mode==="manual") ctl(cur.led? "led_off":"led_on"); };
+$("#ventSw").onclick = ()=>{ if(cur.mode==="manual") ctl(cur.vent?"vent_close":"vent_open"); };
+$("#applyThr").onclick = ()=> ctl("set_threshold",{temp:+$("#thTemp").value, light:+$("#thLight").value});
+
+initChart();
+loadHistory();
+poll();
+setInterval(poll, 1000);
+setInterval(loadHistory, 3000);
+</script>
+</body>
+</html>
