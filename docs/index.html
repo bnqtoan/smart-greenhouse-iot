@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Greenhouse — Hướng dẫn đấu nối</title>
+<style>
+  :root{--bg:#0f172a;--panel:#1e293b;--ink:#e2e8f0;--muted:#94a3b8;--line:#334155;
+    --red:#ef4444;--black:#0f172a;--yellow:#eab308;--orange:#f97316;--violet:#a78bfa;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--ink);padding:20px}
+  .wrap{max-width:1100px;margin:0 auto}
+  h1{font-size:24px;margin-bottom:4px}
+  .sub{color:var(--muted);font-size:14px;margin-bottom:20px}
+  .layout{display:grid;grid-template-columns:1fr 360px;gap:20px}
+  @media(max-width:860px){.layout{grid-template-columns:1fr}}
+  .diagram{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px}
+  svg{width:100%;height:auto;display:block}
+
+  .sidebar{display:flex;flex-direction:column;gap:10px}
+  .hint{color:var(--muted);font-size:13px;margin-bottom:4px}
+  .comp-btn{display:flex;align-items:center;gap:12px;text-align:left;width:100%;
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;
+    color:var(--ink);cursor:pointer;transition:.15s;font-size:14px}
+  .comp-btn:hover{border-color:#64748b;transform:translateX(3px)}
+  .comp-btn.active{border-color:#38bdf8;box-shadow:0 0 0 2px #38bdf855;background:#0c4a6e33}
+  .comp-btn .em{font-size:22px}
+  .comp-btn .t{font-weight:700}
+  .comp-btn .d{font-size:12px;color:var(--muted)}
+  .opt-badge{margin-left:auto;font-size:10px;font-weight:700;color:#fbbf24;border:1px solid #fbbf2455;
+    border-radius:6px;padding:2px 6px}
+
+  .detail{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;font-size:13px;min-height:90px}
+  .detail h3{font-size:15px;margin-bottom:8px}
+  .wire-row{display:flex;align-items:center;gap:8px;padding:4px 0}
+  .swatch{width:26px;height:6px;border-radius:6px;flex:none}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;font-size:12px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:18px;height:5px;border-radius:5px;display:inline-block}
+
+  /* dim non-active wires */
+  svg.focus .wire{opacity:.12}
+  svg.focus .wire.on{opacity:1;stroke-width:5}
+  svg.focus .node{opacity:.25}
+  svg.focus .node.on{opacity:1}
+  .wire{transition:opacity .2s}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🌱 Smart Greenhouse — Hướng dẫn đấu nối</h1>
+  <p class="sub">Bấm vào từng linh kiện bên phải để xem dây nối tới chân nào trên Arduino. Nối Pi bằng <b>cáp USB</b> (không dùng TX/RX).</p>
+
+  <div class="layout">
+    <div class="diagram">
+      <svg id="svg" viewBox="0 0 640 460">
+        <!-- Arduino -->
+        <rect x="20" y="60" width="160" height="340" rx="12" fill="#0d7377" stroke="#0a5559"/>
+        <text x="100" y="84" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">ARDUINO UNO</text>
+        <rect x="6" y="100" width="16" height="26" rx="3" fill="#cbd5e1"/>
+        <text x="14" y="96" text-anchor="middle" fill="#94a3b8" font-size="9">USB</text>
+
+        <!-- pins: id'd circles -->
+        <!-- D7 -->
+        <g class="node" data-pin="D7"><rect x="160" y="120" width="34" height="20" rx="4" fill="#1e293b"/><text x="177" y="134" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">D7</text></g>
+        <!-- D9 -->
+        <g class="node" data-pin="D9"><rect x="160" y="150" width="34" height="20" rx="4" fill="#1e293b"/><text x="177" y="164" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">D9</text></g>
+        <!-- D2 -->
+        <g class="node" data-pin="D2"><rect x="160" y="180" width="34" height="20" rx="4" fill="#1e293b"/><text x="177" y="194" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">D2</text></g>
+        <!-- 5V -->
+        <g class="node" data-pin="5V"><rect x="6" y="250" width="34" height="20" rx="4" fill="#b91c1c"/><text x="23" y="264" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">5V</text></g>
+        <!-- GND -->
+        <g class="node" data-pin="GND"><rect x="6" y="278" width="34" height="20" rx="4" fill="#111827"/><text x="23" y="292" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">GND</text></g>
+        <!-- A0 -->
+        <g class="node" data-pin="A0"><rect x="6" y="306" width="34" height="20" rx="4" fill="#1e293b"/><text x="23" y="320" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">A0</text></g>
+        <!-- A4 -->
+        <g class="node" data-pin="A4"><rect x="6" y="340" width="34" height="20" rx="4" fill="#7c3aed"/><text x="23" y="354" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">A4</text></g>
+        <!-- A5 -->
+        <g class="node" data-pin="A5"><rect x="6" y="368" width="34" height="20" rx="4" fill="#7c3aed"/><text x="23" y="382" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">A5</text></g>
+
+        <!-- component nodes (right) -->
+        <g class="node" data-comp="dht"><rect x="430" y="70" width="180" height="46" rx="8" fill="#1d4ed833" stroke="#3b82f6"/><text x="520" y="92" text-anchor="middle" fill="#dbeafe" font-size="12" font-weight="700">DHT11</text><text x="520" y="108" text-anchor="middle" fill="#93c5fd" font-size="10">nhiệt độ + độ ẩm</text></g>
+        <g class="node" data-comp="ldr"><rect x="430" y="128" width="180" height="46" rx="8" fill="#6d28d933" stroke="#a78bfa"/><text x="520" y="150" text-anchor="middle" fill="#ede9fe" font-size="12" font-weight="700">LDR + R10k</text><text x="520" y="166" text-anchor="middle" fill="#c4b5fd" font-size="10">cảm biến ánh sáng → A0</text></g>
+        <g class="node" data-comp="led"><rect x="430" y="186" width="180" height="46" rx="8" fill="#ca8a0433" stroke="#eab308"/><text x="520" y="208" text-anchor="middle" fill="#fef9c3" font-size="12" font-weight="700">LED + R220Ω</text><text x="520" y="224" text-anchor="middle" fill="#fde68a" font-size="10">đèn trồng cây → D7</text></g>
+        <g class="node" data-comp="servo"><rect x="430" y="244" width="180" height="46" rx="8" fill="#16a34a33" stroke="#22c55e"/><text x="520" y="266" text-anchor="middle" fill="#dcfce7" font-size="12" font-weight="700">Servo SG90 ⚙</text><text x="520" y="282" text-anchor="middle" fill="#86efac" font-size="10">cửa thông gió → D9</text></g>
+        <g class="node" data-comp="lcd"><rect x="430" y="302" width="180" height="46" rx="8" fill="#0284c733" stroke="#38bdf8"/><text x="520" y="324" text-anchor="middle" fill="#e0f2fe" font-size="12" font-weight="700">LCD1602 I2C ⚙</text><text x="520" y="340" text-anchor="middle" fill="#7dd3fc" font-size="10">SDA→A4, SCL→A5</text></g>
+
+        <!-- WIRES (data-comp groups them) -->
+        <!-- DHT -->
+        <path class="wire dht" d="M430 84 C 300 84, 120 260, 40 260" stroke="#ef4444" fill="none" stroke-width="3"/>
+        <path class="wire dht" d="M430 92 C 320 110, 240 190, 194 190" stroke="#eab308" fill="none" stroke-width="3"/>
+        <path class="wire dht" d="M430 100 C 300 130, 120 288, 40 288" stroke="#0f172a" fill="none" stroke-width="3"/>
+        <!-- LDR -->
+        <path class="wire ldr" d="M430 140 C 300 140, 120 260, 40 260" stroke="#ef4444" fill="none" stroke-width="3"/>
+        <path class="wire ldr" d="M430 150 C 280 200, 120 316, 40 316" stroke="#eab308" fill="none" stroke-width="3"/>
+        <path class="wire ldr" d="M430 162 C 300 180, 120 288, 40 288" stroke="#0f172a" fill="none" stroke-width="3"/>
+        <!-- LED -->
+        <path class="wire led" d="M430 200 C 300 200, 240 130, 194 130" stroke="#eab308" fill="none" stroke-width="3"/>
+        <path class="wire led" d="M430 220 C 300 240, 120 288, 40 288" stroke="#0f172a" fill="none" stroke-width="3"/>
+        <!-- Servo -->
+        <path class="wire servo" d="M430 256 C 300 256, 120 260, 40 260" stroke="#ef4444" fill="none" stroke-width="3"/>
+        <path class="wire servo" d="M430 266 C 280 220, 240 160, 194 160" stroke="#f97316" fill="none" stroke-width="3"/>
+        <path class="wire servo" d="M430 282 C 300 300, 120 288, 40 288" stroke="#0f172a" fill="none" stroke-width="3"/>
+        <!-- LCD -->
+        <path class="wire lcd" d="M430 314 C 300 314, 120 260, 40 260" stroke="#ef4444" fill="none" stroke-width="3"/>
+        <path class="wire lcd" d="M430 324 C 300 330, 120 288, 40 288" stroke="#0f172a" fill="none" stroke-width="3"/>
+        <path class="wire lcd" d="M430 336 C 280 350, 120 350, 40 350" stroke="#a78bfa" fill="none" stroke-width="3"/>
+        <path class="wire lcd" d="M430 344 C 280 360, 120 378, 40 378" stroke="#a78bfa" fill="none" stroke-width="3"/>
+
+        <!-- USB to Pi note -->
+        <rect x="20" y="412" width="300" height="36" rx="8" fill="#7c2d1233" stroke="#f97316"/>
+        <text x="32" y="434" fill="#fdba74" font-size="11" font-weight="700">⎘ Cáp USB → Raspberry Pi (/dev/ttyACM0)</text>
+      </svg>
+
+      <div class="legend">
+        <span><i style="background:#ef4444"></i>5V</span>
+        <span><i style="background:#0f172a;border:1px solid #475569"></i>GND</span>
+        <span><i style="background:#eab308"></i>Tín hiệu</span>
+        <span><i style="background:#f97316"></i>PWM servo</span>
+        <span><i style="background:#a78bfa"></i>I2C</span>
+      </div>
+    </div>
+
+    <div class="sidebar">
+      <div class="hint">👆 Bấm linh kiện để xem cách nối:</div>
+      <button class="comp-btn" data-comp="dht"><span class="em">🌡️</span><span><span class="t">DHT11</span><br><span class="d">nhiệt độ + độ ẩm</span></span></button>
+      <button class="comp-btn" data-comp="ldr"><span class="em">☀️</span><span><span class="t">LDR</span><br><span class="d">cảm biến ánh sáng</span></span></button>
+      <button class="comp-btn" data-comp="led"><span class="em">💡</span><span><span class="t">LED</span><br><span class="d">đèn trồng cây</span></span></button>
+      <button class="comp-btn" data-comp="servo"><span class="em">🪟</span><span><span class="t">Servo SG90</span><br><span class="d">cửa thông gió</span></span><span class="opt-badge">TUỲ CHỌN</span></button>
+      <button class="comp-btn" data-comp="lcd"><span class="em">📟</span><span><span class="t">LCD1602 I2C</span><br><span class="d">màn hình local</span></span><span class="opt-badge">TUỲ CHỌN</span></button>
+
+      <div class="detail" id="detail">
+        <h3>Chọn một linh kiện</h3>
+        <p style="color:var(--muted)">Bấm vào nút phía trên để xem dây nối cụ thể tới chân Arduino.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA = {
+  dht:  {name:"DHT11", wires:[["#ef4444","VCC → 5V"],["#eab308","DATA → D2"],["#0f172a","GND → GND"]], note:"Module DHT11 thường có trở kéo sẵn. Nạp xong, Serial Monitor 9600 phải thấy temp/hum ≠ 0."},
+  ldr:  {name:"LDR + R10k", wires:[["#ef4444","5V → đầu LDR"],["#eab308","Điểm giữa → A0"],["#0f172a","R10k → GND"]], note:"Cầu chia áp: 5V—[LDR]—•(A0)—[10kΩ]—GND. Che/rọi đèn để chỉnh ngưỡng (mặc định 400)."},
+  led:  {name:"LED + R220Ω", wires:[["#eab308","Chân dài (+) qua trở 220Ω → D7"],["#0f172a","Chân ngắn (–) → GND"]], note:"Gõ LED:1 / LED:0 trong Serial Monitor để test bật/tắt."},
+  servo:{name:"Servo SG90 (tuỳ chọn)", wires:[["#ef4444","Đỏ → 5V"],["#f97316","Cam → D9 (PWM)"],["#0f172a","Nâu → GND"]], note:"Nếu giật/reset Arduino: cấp nguồn riêng cho servo, hoặc bỏ #define USE_SERVO."},
+  lcd:  {name:"LCD1602 I2C (tuỳ chọn)", wires:[["#ef4444","VCC → 5V"],["#0f172a","GND → GND"],["#a78bfa","SDA → A4"],["#a78bfa","SCL → A5"]], note:"Màn trắng không chữ → vặn contrast / đổi địa chỉ 0x27→0x3F / bỏ #define USE_LCD."}
+};
+const svg = document.getElementById('svg');
+const detail = document.getElementById('detail');
+let active = null;
+
+function select(comp){
+  active = comp;
+  svg.classList.add('focus');
+  // wires
+  svg.querySelectorAll('.wire').forEach(w => w.classList.toggle('on', w.classList.contains(comp)));
+  // nodes: highlight the component box + its pins
+  const pins = DATA[comp].wires.map(w => w[1].split('→').pop().trim());
+  svg.querySelectorAll('.node').forEach(n=>{
+    const isComp = n.dataset.comp===comp;
+    const isPin = pins.includes(n.dataset.pin);
+    n.classList.toggle('on', isComp || isPin);
+  });
+  // buttons
+  document.querySelectorAll('.comp-btn').forEach(b=>b.classList.toggle('active', b.dataset.comp===comp));
+  // detail
+  const d = DATA[comp];
+  detail.innerHTML = `<h3>${d.name}</h3>` +
+    d.wires.map(w=>`<div class="wire-row"><span class="swatch" style="background:${w[0]};${w[0]==='#0f172a'?'border:1px solid #475569':''}"></span>${w[1]}</div>`).join('') +
+    `<p style="color:var(--muted);margin-top:10px">${d.note}</p>`;
+}
+
+document.querySelectorAll('.comp-btn').forEach(b=> b.onclick = ()=>select(b.dataset.comp));
+svg.querySelectorAll('[data-comp]').forEach(g=> g.style.cursor='pointer');
+svg.querySelectorAll('.node[data-comp]').forEach(g=> g.onclick = ()=>select(g.dataset.comp));
+</script>
+</body>
+</html>

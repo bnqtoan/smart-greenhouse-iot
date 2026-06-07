@@ -17,6 +17,13 @@ final/
     └── SLIDES_OUTLINE.md               # dàn ý slide + đối chiếu rubric
 ```
 
+## 📺 Xem cách đấu nối (visual)
+- **Trang tương tác** (bấm linh kiện → highlight dây): mở `docs/index.html` trong trình duyệt
+  (hoặc qua GitHub Pages — xem link bên dưới).
+- **Sơ đồ schematic** (chính xác từng chân): `docs/wiring.svg`
+- **Ảnh breadboard minh hoạ** (hình dung tổng thể): `docs/wiring-render.png`
+  *(ảnh AI minh hoạ — chân chính xác theo `wiring.svg` / `docs/index.html`)*
+
 ## Chạy nhanh
 1. Arduino IDE: cài *DHT sensor library*, *LiquidCrystal_I2C* → nạp `greenhouse.ino`.
 2. Cắm Arduino vào **USB của Pi**.
