@@ -38,16 +38,15 @@
 #endif
 
 #ifdef USE_SERVO
-  // ServoTimer2 uses Timer2 (NOT Timer1), so it coexists with SoftwareSerial
-  // (Bluetooth). The standard Servo lib uses Timer1 and conflicts with
-  // SoftwareSerial -> servo stops moving. ServoTimer2 fixes that.
+  // ServoTimer2 uses Timer2 (NOT Timer1) so it coexists with SoftwareSerial
+  // (Bluetooth). Standard Servo lib uses Timer1 -> conflicts -> servo dies.
   // Install: Arduino IDE -> Library Manager -> "ServoTimer2".
-  // API note: write() takes MICROSECONDS (544..2400), not degrees.
+  // write() takes MICROSECONDS (544..2400), not degrees.
   #include <ServoTimer2.h>
   ServoTimer2 vent;
-  const int SERVO_PIN = 9;
-  const int SERVO_CLOSED = 700;   // ~0 deg  (us)
-  const int SERVO_OPEN   = 1900;  // ~90 deg (us)
+  const int SERVO_PIN    = 9;
+  const int SERVO_CLOSED = 700;   // us, ~0 deg
+  const int SERVO_OPEN   = 1900;  // us, ~90 deg
 #endif
 
 #ifdef USE_LCD
@@ -84,14 +83,13 @@ const unsigned long REPORT_MS = 1000;
 
 void setVent(bool open) {
 #ifdef USE_SERVO
-  // Only move the servo when the state actually changes. We attach -> write ->
-  // let it travel -> detach. Detaching frees Timer1 so SoftwareSerial (Bluetooth)
-  // does not disrupt the servo PWM during steady data streaming. A servo holds
-  // its position mechanically while detached.
+  // Move only on a state change. Bit-bang ~20 pulses (≈400ms) to drive the
+  // servo to position, then stop (it holds mechanically). No Servo library =
+  // no Timer1 clash with SoftwareSerial/Bluetooth.
   if (open != ventOpen || !ventInit) {
     vent.attach(SERVO_PIN);
     vent.write(open ? SERVO_OPEN : SERVO_CLOSED);   // microseconds
-    delay(400);                  // give the servo time to travel
+    delay(400);                  // let it travel
     vent.detach();
     ventInit = true;
   }
