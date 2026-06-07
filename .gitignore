@@ -3,3 +3,7 @@ __pycache__/
 *.db
 .DS_Store
 telegram_config.json
+
+# regenerable slide intermediate (run build_slides.py)
+deliverable/02-report/Smart-Greenhouse-Slides.html
+excalidraw.log
